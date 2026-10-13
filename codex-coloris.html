@@ -1,0 +1,1485 @@
+<title>Codex Coloris</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Felipa&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap">
+<style>
+/* Layout: one bound codex. Each section is a folio (f. 1r to f. 6v) with a text block and an outer margin of mirror-written notes; wide plates run across both. */
+:root{
+  color-scheme: light;
+  --paper:#EADCBB;
+  --paper-deep:#DCC79C;
+  --paper-lit:#F6EEDC;
+  --ink:#33241A;
+  --ink-soft:#5E4630;
+  --sepia:#7A5A36;
+  --sanguine:#9A3A20;
+  --graphite:rgba(51,36,26,.22);
+  --rule:rgba(122,90,54,.4);
+  --f-display:"IM Fell English","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --f-caps:"IM Fell English SC","IM Fell English",Georgia,serif;
+  --f-body:"EB Garamond",Garamond,"Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --f-hand:"Felipa","Apple Chancery","URW Chancery L","Palatino Linotype",cursive;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{
+  background-color:var(--paper);
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:clamp(17px, 16px + .25vw, 19.5px);
+  line-height:1.55;
+  font-variant-numeric:oldstyle-nums proportional-nums;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:50;
+  background:radial-gradient(ellipse 120% 90% at 50% 45%, transparent 58%, rgba(96,60,24,.2) 100%);
+}
+::selection{background:rgba(154,58,32,.25)}
+a{color:inherit; text-decoration-color:var(--rule); text-underline-offset:.18em}
+a:hover{text-decoration-color:var(--sanguine)}
+a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{outline:2px solid var(--ink); outline-offset:3px}
+p{margin:0}
+h1,h2,h3{font-family:var(--f-display); font-weight:400; margin:0; line-height:1.06; text-wrap:balance; color:var(--ink)}
+h1{font-size:clamp(2.8rem, 1.6rem + 4.8vw, 5.7rem); letter-spacing:-.012em}
+h1 em{color:var(--sanguine)}
+h2{font-size:clamp(2.05rem, 1.35rem + 2.6vw, 3.35rem)}
+h3{font-size:1.42rem; font-style:italic}
+sup{font-size:.62em; line-height:0; font-variant-numeric:lining-nums}
+sup a{color:var(--sanguine); text-decoration:none; padding-inline:.08em}
+sup a:hover{text-decoration:underline}
+sup a + a::before{content:","; padding-right:.08em}
+.svg-defs{position:absolute; width:0; height:0; overflow:hidden}
+
+.codex{padding-inline:clamp(16px, 4vw, 56px); padding-block:0 96px}
+
+/* ---------- folio frame ---------- */
+.folio{
+  position:relative; max-width:1200px; margin-inline:auto;
+  padding-block:clamp(60px, 8vw, 108px) clamp(44px, 6vw, 76px);
+  display:grid; grid-template-columns:minmax(0,1fr) 210px;
+  column-gap:clamp(28px, 4vw, 64px); row-gap:clamp(28px, 3.4vw, 44px); align-items:start;
+}
+.folio:not(.hero){border-top:1px solid var(--rule)}
+.folio:not(.hero)::before{content:""; position:absolute; left:0; right:0; top:3px; border-top:1px solid var(--rule); opacity:.55}
+.folio > .body{grid-column:1; min-width:0}
+.folio > .margin{grid-column:2; grid-row:1; min-width:0; display:grid; gap:30px; padding-top:clamp(0px, 6vw, 96px)}
+.folio > .wide{grid-column:1 / -1; min-width:0}
+.folio-no{position:absolute; top:22px; font-family:var(--f-hand); font-size:1.12rem; color:var(--ink-soft)}
+.folio-no.recto{right:0}
+.folio-no.verso{left:0}
+.eyebrow{font-family:var(--f-caps); letter-spacing:.09em; font-size:.95rem; color:var(--sanguine); margin-bottom:.55rem}
+.intro{max-width:62ch; font-size:1.08em; margin-top:1rem}
+.intro + .intro{margin-top:.75rem}
+.small{font-size:.88em}
+.muted{color:var(--ink-soft)}
+.hand{font-family:var(--f-hand)}
+
+/* evidence tags */
+.tag{display:inline-flex; align-items:center; gap:.38em; font-family:var(--f-caps); font-size:.8em; letter-spacing:.06em; color:var(--ink-soft); white-space:nowrap; margin-right:.3em}
+.tag::before{content:""; width:.56em; height:.56em; border-radius:50%; background:var(--ink); flex:none}
+.tag.i{color:var(--sanguine)}
+.tag.i::before{background:transparent; border:1.5px solid var(--sanguine)}
+.tag.c::before{border-radius:0; background:transparent; border:1.5px solid var(--ink); transform:rotate(45deg) scale(.9)}
+.tag.d{color:var(--sanguine)}
+.tag.d::before{border-radius:0; height:2px; width:.85em; background:var(--sanguine)}
+
+/* mirror notes */
+.note{display:grid; gap:.35rem}
+.note .lbl{font-family:var(--f-caps); font-size:.76rem; letter-spacing:.11em; color:var(--sanguine)}
+.mirror{
+  font-family:var(--f-hand); font-size:1.13rem; line-height:1.38; color:var(--ink-soft);
+  transform:perspective(700px) rotateY(180deg); transition:transform 1s cubic-bezier(.2,.75,.2,1);
+  cursor:help; border-radius:2px;
+}
+.mirror:hover, .mirror:focus-visible{transform:perspective(700px) rotateY(0deg)}
+
+/* ink drawing: visible at rest, replayed on load and during the film */
+.inkwork, .ink-svg{fill:none; stroke:var(--ink); stroke-linecap:round; stroke-linejoin:round}
+.ink{stroke-dasharray:var(--len, none); stroke-dashoffset:0}
+.drawing .ink{animation:draw var(--dur, 1.5s) cubic-bezier(.55,.06,.3,1) var(--d, 0s) both}
+@keyframes draw{from{stroke-dashoffset:var(--len, 0)} to{stroke-dashoffset:0}}
+.w05{stroke-width:.6} .w1{stroke-width:1} .w15{stroke-width:1.5} .w2{stroke-width:2}
+.graphite{fill:none; stroke:var(--graphite); stroke-width:.8}
+.hatch{background-image:repeating-linear-gradient(45deg, transparent 0 5px, rgba(51,36,26,.2) 5px 6px)}
+
+/* buttons */
+.btn{
+  display:inline-flex; align-items:center; gap:.6em; font-family:var(--f-caps); font-size:1.02rem; letter-spacing:.06em;
+  padding:.62em 1.15em; border:1.5px solid var(--ink); background:transparent; color:var(--ink);
+  border-radius:2px; cursor:pointer; text-decoration:none; line-height:1.2;
+  transition:background-color .25s, color .25s, transform .2s;
+}
+.btn:hover{background:rgba(51,36,26,.07)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--sanguine); border-color:var(--sanguine); color:var(--paper-lit)}
+.btn.primary:hover{background:#86311A}
+.btn.small{font-size:.86rem; padding:.42em .85em}
+.tri{width:0; height:0; border-left:.62em solid currentColor; border-top:.38em solid transparent; border-bottom:.38em solid transparent}
+
+/* ---------- f. 1r hero ---------- */
+.folio.hero{grid-template-columns:minmax(0,1fr) minmax(0,540px); align-items:center; padding-top:clamp(72px, 9vw, 124px)}
+.hero .body{display:grid; gap:1.35rem}
+.hero .lede{max-width:52ch; font-size:1.1em; color:var(--ink-soft)}
+.thesis{font-family:var(--f-display); font-size:clamp(1.35rem, 1.05rem + .9vw, 1.75rem); line-height:1.3; max-width:30ch; font-style:italic}
+.initial{float:left; font-family:var(--f-display); font-style:normal; font-size:3.4em; line-height:.8; color:var(--sanguine); padding:.06em .1em 0 0}
+.actions{display:flex; flex-wrap:wrap; gap:12px; align-items:center}
+.film-hint{font-size:.88em; color:var(--ink-soft); max-width:46ch}
+.legend{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:.4rem 1.4rem; font-size:.9em; color:var(--ink-soft); padding-top:.9rem; border-top:1px solid var(--rule); max-width:560px}
+.legend div{min-width:0}
+.wheel{margin:0; display:grid; gap:.9rem; justify-items:center}
+.wheel-stage{position:relative; width:100%; aspect-ratio:1; max-width:100%}
+.wheel-stage > *{position:absolute; inset:0; width:100%; height:100%; display:block}
+.rotor{mix-blend-mode:multiply}
+.rotor canvas, .rotor svg{position:absolute; inset:0; width:100%; height:100%}
+.rotor.turning{animation:turn 300s linear infinite}
+@keyframes turn{to{transform:rotate(360deg)}}
+#core{mix-blend-mode:multiply}
+.wl{font-family:var(--f-caps); font-size:13px; letter-spacing:.08em; fill:var(--ink); stroke:none; text-anchor:middle; dominant-baseline:middle}
+.core-t{font-family:var(--f-caps); fill:var(--paper-lit); stroke:none; text-anchor:middle}
+.arc-t{font-family:var(--f-hand); font-size:13px; fill:var(--ink); stroke:none; letter-spacing:.04em}
+.wheel figcaption{font-size:.9em; color:var(--ink-soft); text-align:center; max-width:44ch}
+.wheel figcaption b{font-family:var(--f-caps); font-weight:400; letter-spacing:.06em; color:var(--ink)}
+.hero .note{max-width:320px; justify-self:center}
+
+/* ---------- f. 1v evidence ---------- */
+.obs-grid{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:clamp(24px, 3vw, 44px)}
+.obs{display:grid; gap:.75rem; align-content:start; min-width:0}
+.obs .big{font-family:var(--f-display); font-size:4.2rem; line-height:.9; color:var(--sanguine); font-variant-numeric:lining-nums}
+.obs .big small{font-size:1.1rem; color:var(--ink-soft); font-style:italic; margin-left:.3rem}
+.obs svg{width:100%; height:auto; display:block}
+.obs .lab{font-family:var(--f-hand); font-size:15px; fill:var(--ink-soft); stroke:none}
+.blues{display:grid; grid-template-columns:auto repeat(3, 1fr); grid-template-rows:auto repeat(3, 44px); gap:6px 8px; align-items:center; font-family:var(--f-hand); font-size:.95rem; color:var(--ink-soft)}
+.blues span.b{height:40px; border-radius:48% 52% 44% 56% / 58% 46% 54% 42%; mix-blend-mode:multiply}
+.claim{position:relative; font-family:var(--f-hand); font-size:1.25rem; line-height:1.4; padding:.4rem 0}
+.claim svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
+
+/* ---------- f. 2r principles ---------- */
+.six{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:clamp(30px, 3.4vw, 52px) clamp(24px, 3vw, 44px)}
+.principle{display:grid; gap:.6rem; align-content:start; min-width:0}
+.principle .emb{width:112px; height:auto; display:block}
+.principle h3{font-family:var(--f-caps); font-style:normal; font-size:1.5rem; letter-spacing:.04em}
+.principle .why{font-size:.92em; color:var(--ink-soft)}
+.cave{font-size:.92em; font-style:italic; color:var(--sanguine); padding-left:.9rem; border-left:1.5px solid var(--sanguine)}
+.cave b{font-family:var(--f-caps); font-style:normal; font-weight:400; letter-spacing:.06em; margin-right:.3em}
+
+/* ---------- f. 2v pigments ---------- */
+.register{display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:34px 26px}
+.pigment{display:grid; gap:.45rem; align-content:start; min-width:0}
+.pigment canvas{width:100%; height:auto; aspect-ratio:440/170; display:block; mix-blend-mode:multiply}
+.pigment h3{font-size:1.32rem}
+.pigment .hex{font-family:var(--f-caps); font-size:.8rem; letter-spacing:.08em; color:var(--ink-soft); font-variant-numeric:lining-nums}
+.pigment .sig{font-style:italic}
+.pigment dl{margin:.2rem 0 0; display:grid; gap:.42rem; font-size:.9em}
+.pigment dt{font-family:var(--f-caps); font-size:.76rem; letter-spacing:.09em; color:var(--sanguine)}
+.pigment dd{margin:0}
+
+/* ---------- f. 3r machine ---------- */
+.machine{display:grid; grid-template-columns:minmax(0, 1.05fr) minmax(0, 1fr); gap:clamp(28px, 4vw, 56px); align-items:start}
+#gears{width:100%; height:auto; display:block}
+.gear-t{font-family:var(--f-caps); font-size:14px; letter-spacing:.07em; fill:var(--ink); stroke:none; text-anchor:middle}
+.gear-s{font-family:var(--f-hand); font-size:13px; fill:var(--ink-soft); stroke:none; text-anchor:middle}
+.layers{list-style:none; margin:0; padding:0; display:grid; gap:1rem}
+.layers li{display:grid; grid-template-columns:2.4rem minmax(0,1fr); gap:.2rem .6rem}
+.layers .num{font-family:var(--f-display); font-size:1.6rem; color:var(--sanguine); line-height:1.1}
+.layers b{font-family:var(--f-caps); font-weight:400; letter-spacing:.05em; font-size:1.08rem}
+.layers code, .tok code{font-family:var(--f-body); font-style:italic; font-size:.98em}
+.tok{columns:2 230px; column-gap:28px; margin:1.4rem 0 0; padding:1rem 0 0; border-top:1px solid var(--rule); list-style:none}
+.tok li{break-inside:avoid; display:grid; grid-template-columns:18px minmax(0,1fr) auto; gap:.55rem; align-items:center; padding:.18rem 0; font-size:.92em}
+.tok .sw, .chips .sw{width:16px; height:16px; border-radius:46% 54% 50% 50% / 52% 48% 56% 44%; border:1px solid rgba(51,36,26,.45)}
+.tok .v, .chips .v{font-family:var(--f-caps); letter-spacing:.06em; font-size:.82rem; font-variant-numeric:lining-nums tabular-nums; color:var(--ink-soft)}
+.calc{margin-top:1.2rem; font-size:.92em}
+
+/* ---------- f. 3v balance ---------- */
+.bal{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(28px, 4vw, 56px); align-items:start}
+.pick{display:grid; gap:.5rem}
+.pick .row-lbl{font-family:var(--f-caps); font-size:.82rem; letter-spacing:.09em; color:var(--sanguine)}
+.chiprow{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+.chip{width:30px; height:30px; padding:0; border-radius:50% 46% 52% 48% / 48% 54% 46% 52%; border:1.5px solid rgba(51,36,26,.5); cursor:pointer; transition:transform .2s}
+.chip:hover{transform:scale(1.12)}
+.chip[aria-pressed="true"]{box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--ink); transform:scale(1.08)}
+.chiprow input[type=color]{width:38px; height:30px; padding:0 2px; border:1.5px dashed var(--ink-soft); background:transparent; border-radius:3px; cursor:pointer}
+.specimen{margin-top:.6rem; border:1.5px solid var(--ink); border-radius:3px; padding:1.1rem 1.2rem; display:grid; gap:.5rem; transition:background-color .45s, color .45s}
+.specimen .big{font-family:var(--f-body); font-weight:600; font-size:1.6rem; line-height:1.1}
+.specimen .ring{width:46px; height:22px; border-radius:11px; border:2px solid currentColor; display:inline-block; vertical-align:middle; margin-right:.5rem}
+.presets{display:flex; flex-wrap:wrap; gap:6px; margin-top:.4rem}
+.presets button{font-family:var(--f-body); font-size:.86rem; border:1px solid var(--rule); background:rgba(246,238,220,.45); color:var(--ink); padding:.3em .6em; border-radius:2px; cursor:pointer; font-variant-numeric:lining-nums}
+.presets button:hover{border-color:var(--ink)}
+.presets .sw2{display:inline-block; width:.9em; height:.9em; border-radius:50%; vertical-align:-.1em; margin-right:.3em; border:1px solid rgba(51,36,26,.4)}
+#balance{width:100%; height:auto; display:block; max-width:480px; margin-inline:auto}
+.bal-t{font-family:var(--f-display); fill:var(--ink); stroke:none; text-anchor:middle; font-variant-numeric:lining-nums}
+.bal-h{font-family:var(--f-hand); font-size:15px; fill:var(--ink-soft); stroke:none; text-anchor:middle}
+.readout{text-align:center; display:grid; gap:.2rem}
+.readout .r{font-family:var(--f-display); font-size:3rem; line-height:1; font-variant-numeric:lining-nums}
+.verdicts{list-style:none; margin:.8rem 0 0; padding:0; display:grid; gap:.3rem}
+.verdicts li{display:grid; grid-template-columns:5.4rem minmax(0,1fr); gap:.6rem; align-items:baseline}
+.verdicts .v{font-family:var(--f-caps); letter-spacing:.05em}
+.verdicts .pass{color:var(--ink)}
+.verdicts .fail{color:var(--sanguine)}
+.gates{width:100%; border-collapse:collapse; font-size:.93em}
+.gates th, .gates td{text-align:left; vertical-align:top; padding:.65rem .8rem .65rem 0; border-top:1px solid var(--rule)}
+.gates th{font-family:var(--f-caps); font-weight:400; letter-spacing:.06em; white-space:nowrap}
+.gates thead th{font-size:.8rem; color:var(--sanguine); border-top:none}
+.scroll{overflow-x:auto}
+.cvd-fig{display:flex; flex-wrap:wrap; align-items:center; gap:.5rem 1.2rem; margin-top:1.2rem}
+.cvd-fig svg{height:44px; width:auto}
+
+/* ---------- f. 4r atlas ---------- */
+.atlas{display:grid; grid-template-columns:240px minmax(0,1fr); gap:clamp(24px, 3.4vw, 48px); align-items:start}
+.trades{list-style:none; margin:0; padding:0; display:grid; gap:2px}
+.trades button{width:100%; text-align:left; font-family:var(--f-body); font-size:1rem; color:var(--ink); background:transparent; border:0; border-left:2px solid transparent; padding:.32rem .7rem; cursor:pointer; display:flex; gap:.6rem; align-items:center}
+.trades button:hover{background:rgba(51,36,26,.06)}
+.trades button[aria-pressed="true"]{border-left-color:var(--sanguine); background:rgba(154,58,32,.08); font-style:italic}
+.trades .dots{display:inline-flex; flex:none}
+.trades .dots i{width:9px; height:9px; border-radius:50%; margin-right:-2px; border:1px solid rgba(51,36,26,.35)}
+.study{display:grid; gap:1rem; min-width:0}
+#plate{width:100%; height:auto; display:block}
+#plate .pgtxt{font-family:var(--f-body); stroke:none}
+#plate rect, #plate circle, #plate path.fillme, #plate text{transition:fill .7s ease, stroke .7s ease, fill-opacity .7s ease}
+.ann-t{font-family:var(--f-hand); font-size:17px; fill:var(--ink-soft); stroke:none}
+.cvd-tools{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+.cvd-tools .row-lbl{font-family:var(--f-caps); font-size:.8rem; letter-spacing:.09em; color:var(--sanguine); margin-right:.3rem}
+.seg{font-family:var(--f-body); font-size:.9rem; border:1px solid var(--rule); background:transparent; color:var(--ink); padding:.28em .7em; cursor:pointer; border-radius:2px}
+.seg[aria-pressed="true"]{border-color:var(--ink); background:rgba(51,36,26,.08)}
+.study-text{display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:1rem 2rem}
+.study-text h3{grid-column:1 / -1}
+.chips{list-style:none; margin:0; padding:0; display:grid; gap:.32rem; font-size:.92em}
+.chips li{display:grid; grid-template-columns:18px 4.6rem auto; gap:.5rem; align-items:center}
+.chips .k{font-family:var(--f-caps); font-size:.82rem; letter-spacing:.06em}
+
+/* ---------- f. 4v interfaces ---------- */
+.iface{display:grid; gap:.6rem; align-content:start; min-width:0}
+.iface h3{font-family:var(--f-caps); font-style:normal; font-size:1.42rem; letter-spacing:.04em}
+.iface .src{font-size:.92em; color:var(--ink-soft)}
+.chain{list-style:none; margin:.2rem 0; padding:0; display:flex; flex-wrap:wrap; gap:.25rem .2rem; font-size:.9em}
+.chain li{font-style:italic}
+.chain li + li::before{content:"\2192"; font-style:normal; color:var(--sanguine); margin:0 .35rem 0 .15rem}
+
+/* ---------- f. 5r experiment ---------- */
+.exp{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:clamp(28px, 4vw, 60px); align-items:start}
+.steps{list-style:none; margin:0; padding:0; display:grid; gap:.85rem; counter-reset:s}
+.steps li{display:grid; grid-template-columns:3rem minmax(0,1fr); gap:.6rem; align-items:baseline}
+.steps .num{font-family:var(--f-display); font-size:1.35rem; color:var(--sanguine); text-align:right}
+.tallies{display:grid; gap:1.1rem}
+.tally{display:grid; gap:.25rem}
+.tally svg{height:46px; width:auto; max-width:100%; display:block}
+.tally .lbl{display:flex; gap:.6rem; align-items:baseline; flex-wrap:wrap}
+.tally .n{font-family:var(--f-display); font-size:2rem; line-height:1; font-variant-numeric:lining-nums}
+.quote{font-family:var(--f-display); font-style:italic; font-size:1.25rem; line-height:1.35}
+
+/* ---------- f. 5v crossroads ---------- */
+.fork{display:grid; gap:.7rem; align-content:start; min-width:0}
+.fork h3{font-size:1.32rem}
+.branches{position:relative; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px; padding-top:24px; font-size:.92em}
+.branches::before{content:""; position:absolute; top:10px; left:25%; right:25%; height:12px; border:1.3px solid var(--ink-soft); border-bottom:0; border-radius:12px 12px 0 0}
+.branches::after{content:""; position:absolute; top:0; left:50%; height:10px; border-left:1.3px solid var(--ink-soft)}
+.branches .b{display:block; font-family:var(--f-caps); letter-spacing:.08em; font-size:.84rem; color:var(--sanguine)}
+
+/* ---------- f. 6r palette ---------- */
+.pans{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:26px 22px}
+.pan{display:grid; gap:.4rem; align-content:start; min-width:0}
+.tin{padding:7px; border:1.5px solid var(--ink); border-radius:6px; background:rgba(246,238,220,.5)}
+.cake{height:84px; border-radius:4px 4px 12px 12px; box-shadow:inset 0 3px 0 rgba(255,255,255,.28), inset 0 -10px 18px rgba(0,0,0,.2), inset 0 0 0 1px rgba(0,0,0,.12)}
+.pan .role{font-family:var(--f-caps); letter-spacing:.06em; font-size:1.05rem}
+.pan .v{font-family:var(--f-caps); letter-spacing:.07em; font-size:.84rem; color:var(--ink-soft); font-variant-numeric:lining-nums}
+.pan .nt{font-size:.88em; color:var(--ink-soft)}
+.copyrow{display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-top:.4rem}
+.copied{font-family:var(--f-hand); color:var(--sanguine)}
+details.css{margin-top:.6rem}
+details.css summary{cursor:pointer; font-family:var(--f-caps); letter-spacing:.06em; font-size:.92rem}
+details.css pre{margin:.6rem 0 0; padding:1rem 1.1rem; background:rgba(246,238,220,.6); border:1px solid var(--rule); overflow-x:auto; font-size:.86rem; line-height:1.5; font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace; color:var(--ink)}
+
+/* ---------- colophon ---------- */
+.refs{columns:2 300px; column-gap:40px; margin:0; padding-left:1.6rem; font-size:.88em}
+.refs li{break-inside:avoid; margin-bottom:.4rem; font-variant-numeric:lining-nums}
+.refs li::marker{font-family:var(--f-caps); color:var(--sanguine)}
+.refs a{text-decoration-color:var(--rule)}
+.refs .pub{color:var(--ink-soft); font-style:italic}
+.make{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:24px 36px; font-size:.92em}
+.make h3{font-family:var(--f-caps); font-style:normal; font-size:1.05rem; letter-spacing:.06em; margin-bottom:.35rem}
+
+/* ---------- film bar ---------- */
+.filmbar{
+  position:fixed; left:0; right:0; bottom:0; z-index:60;
+  padding:10px clamp(16px, 4vw, 40px) calc(10px + env(safe-area-inset-bottom, 0px));
+  background:rgba(51,36,26,.92); color:var(--paper-lit);
+  display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:6px 16px; align-items:center;
+  transition:opacity .6s;
+}
+.filmbar.quiet{opacity:0}
+.filmbar .reel{font-family:var(--f-caps); letter-spacing:.1em; font-size:.85rem; color:#E7B99F}
+.filmbar .ttl{font-family:var(--f-display); font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.filmbar .track{grid-column:1 / -1; height:3px; background:rgba(246,238,220,.22); border-radius:2px; overflow:hidden}
+.filmbar .track i{display:block; height:100%; width:0; background:#E7B99F}
+.filmbar .btn{border-color:var(--paper-lit); color:var(--paper-lit)}
+.filmbar .btn:hover{background:rgba(246,238,220,.12)}
+
+/* ---------- responsive ---------- */
+@media (max-width:1100px){
+  .register{grid-template-columns:repeat(2, minmax(0,1fr))}
+  .six{grid-template-columns:repeat(2, minmax(0,1fr))}
+  .make{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:980px){
+  .obs-grid{grid-template-columns:minmax(0,1fr)}
+  .machine, .bal, .exp{grid-template-columns:minmax(0,1fr)}
+  .atlas{grid-template-columns:minmax(0,1fr)}
+  .trades{display:flex; flex-wrap:wrap; gap:4px}
+  .trades li{flex:0 1 auto}
+  .trades button{border-left:0; border-bottom:2px solid transparent; padding:.3rem .55rem; font-size:.92rem}
+  .trades button[aria-pressed="true"]{border-bottom-color:var(--sanguine)}
+}
+@media (max-width:900px){
+  .folio, .folio.hero{grid-template-columns:minmax(0,1fr)}
+  .folio > .margin{grid-column:1; grid-row:auto; padding-top:0; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr))}
+  .hero .wheel{width:min(100%, 460px); justify-self:center}
+  .pans{grid-template-columns:repeat(2, minmax(0,1fr))}
+}
+@media (max-width:640px){
+  .six, .register{grid-template-columns:minmax(0,1fr)}
+  .legend{grid-template-columns:minmax(0,1fr)}
+  .study-text{grid-template-columns:minmax(0,1fr)}
+  .branches{grid-template-columns:minmax(0,1fr)}
+  .branches::before, .branches::after{display:none}
+  .branches{padding-top:0}
+  .filmbar{grid-template-columns:minmax(0,1fr) auto}
+  .filmbar .reel{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .drawing .ink{animation:none}
+  .mirror{transition:none}
+  .rotor.turning{animation:none}
+  .specimen, #plate rect, #plate circle, #plate text{transition:none}
+}
+</style>
+
+<svg class="svg-defs" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="3" result="t"/>
+      <feDisplacementMap in="SourceGraphic" in2="t" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="wash" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" seed="11" result="t"/>
+      <feDisplacementMap in="SourceGraphic" in2="t" scale="10" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation=".7"/>
+    </filter>
+    <filter id="cvd-gray" color-interpolation-filters="linearRGB"><feColorMatrix type="saturate" values="0"/></filter>
+    <filter id="cvd-deut" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.367322 0.860646 -0.227968 0 0  0.280085 0.672501 0.047413 0 0  -0.011820 0.042940 0.968881 0 0  0 0 0 1 0"/></filter>
+    <filter id="cvd-prot" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.152286 1.052583 -0.204868 0 0  0.114503 0.786281 0.099216 0 0  -0.003882 -0.048116 1.051998 0 0  0 0 0 1 0"/></filter>
+    <pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#33241A" stroke-width=".7" stroke-opacity=".42"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1 L9 5 L1 9" fill="none" stroke="#33241A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="codex">
+
+<!-- ================= f. 1r ================= -->
+<header class="folio hero" id="f1r" data-title="On the colors that move the hand">
+  <span class="folio-no recto">f. 1r</span>
+  <div class="body">
+    <p class="eyebrow">Codex Coloris · Quaderno del colore</p>
+    <h1>On the colors that <em>move the hand</em></h1>
+    <p class="lede">Color psychology for conversion-oriented interfaces, kept as a Renaissance notebook. Drawn from a research report checked 13 October 2026, for EU-facing responsive web interfaces held to WCAG 2.2 AA.</p>
+    <p class="thesis"><span class="initial">N</span>o hue converts universally. Build one obvious hierarchy, reserve one contrasting color for action, and prove it against real funnel outcomes.<sup><a href="#r1">1</a><a href="#r2">2</a><a href="#r3">3</a></sup></p>
+    <div class="actions">
+      <button class="btn primary" id="playFilm" type="button"><span class="tri" aria-hidden="true"></span>Play as film</button>
+      <a class="btn" href="#f6r">Recommended palette</a>
+    </div>
+    <p class="film-hint" id="filmHint">A slow camera pass through every folio, timed for screen recording. Scroll, tap or press Esc to stop.</p>
+    <div class="legend" aria-label="How claims are marked">
+      <div><span class="tag s">sourced</span> from a cited study or standard</div>
+      <div><span class="tag i">inferred</span> design reasoning from the sources</div>
+      <div><span class="tag c">calculated</span> with the W3C contrast formula</div>
+      <div><span class="tag d">disputed</span> contested or mixed findings</div>
+    </div>
+  </div>
+  <figure class="wheel">
+    <div class="wheel-stage" role="img" aria-label="A Vitruvian construction of circle and square holding a watercolor wheel of ten color families, with burnt orange fixed at the center as the reserved action color.">
+      <svg class="under" id="under" viewBox="0 0 600 600" aria-hidden="true"></svg>
+      <div class="rotor" aria-hidden="true">
+        <canvas id="wedges"></canvas>
+        <svg id="rotorSvg" class="inkwork" viewBox="0 0 600 600"></svg>
+      </div>
+      <canvas id="core" aria-hidden="true"></canvas>
+      <svg id="inkSvg" class="inkwork" viewBox="0 0 600 600" aria-hidden="true" filter="url(#rough)"></svg>
+    </div>
+    <figcaption><b>Fig. 1</b> Ten pigment families turn about a fixed center. Only the action color holds still.</figcaption>
+    <div class="note">
+      <span class="lbl">Nota · hover or tap to read</span>
+      <p class="mirror" tabindex="0">Leonardo kept his notebooks in mirror script, right to left. Hover or focus a note like this one to hold it to the glass.</p>
+    </div>
+  </figure>
+</header>
+
+<main>
+
+<!-- ================= f. 1v ================= -->
+<section class="folio" id="f1v" data-title="The limits of the evidence">
+  <span class="folio-no verso">f. 1v</span>
+  <div class="body">
+    <p class="eyebrow">Dei limiti · Evidence boundary</p>
+    <h2>The limits of the evidence</h2>
+    <p class="intro">Color does change how people feel and act, but never on its own. Every effect on these pages is moderated by the interface around it, the task, the category, the culture and the audience.<sup><a href="#r1">1</a><a href="#r2">2</a></sup></p>
+  </div>
+  <aside class="margin">
+    <div class="note">
+      <span class="lbl">Nota · freshness</span>
+      <p class="mirror" tabindex="0">The foundational studies are older than a year because they set the theory. The accessibility and design-system sources were updated in 2025 and 2026.</p>
+    </div>
+  </aside>
+  <div class="wide obs-grid">
+    <article class="obs">
+      <p class="big">40<small>studies reviewed</small></p>
+      <p><span class="tag s">sourced</span>A 2024 systematic review found color can influence consumers’ psychological state and behavior, but the effect is moderated by other factors.<sup><a href="#r8">8</a></sup></p>
+      <svg viewBox="0 0 320 132" aria-label="The same red disc: avoidance in an achievement context, approach in other contexts." role="img" class="ink-svg">
+        <text class="lab" x="10" y="20">achievement context</text>
+        <text class="lab" x="172" y="20">other contexts</text>
+        <line class="w05" x1="160" y1="8" x2="160" y2="124" stroke-dasharray="2 4"/>
+        <circle cx="48" cy="72" r="24" fill="#B91C1C" stroke="none" filter="url(#wash)" style="mix-blend-mode:multiply"/>
+        <circle cx="210" cy="72" r="24" fill="#B91C1C" stroke="none" filter="url(#wash)" style="mix-blend-mode:multiply"/>
+        <circle cx="96" cy="72" r="4" fill="#33241A" stroke="none"/>
+        <path class="ink w15" d="M104 72 Q122 66 144 70" marker-end="url(#arrow)" style="--d:.2s"/>
+        <text class="lab" x="92" y="104">avoid</text>
+        <circle cx="290" cy="72" r="4" fill="#33241A" stroke="none"/>
+        <path class="ink w15" d="M282 72 Q262 78 242 73" marker-end="url(#arrow)" style="--d:.5s"/>
+        <text class="lab" x="236" y="104">approach</text>
+      </svg>
+    </article>
+    <article class="obs">
+      <h3>Hue alone is incomplete</h3>
+      <p><span class="tag s">sourced</span>Brand-color experiments link red with excitement and blue with competence, yet saturation and lightness also shift perceived personality. Product–color congruity matters: functional offers fit functional colors, sensory or social offers fit expressive ones.<sup><a href="#r9">9</a><a href="#r10">10</a><a href="#r11">11</a></sup></p>
+      <div class="blues" aria-label="One blue hue at three saturations and three lightnesses." role="img">
+        <span></span><span>muted</span><span>&rarr;</span><span>vivid</span>
+        <span>dark</span><span class="b" style="background:hsl(200 35% 28%)"></span><span class="b" style="background:hsl(200 65% 28%)"></span><span class="b" style="background:hsl(200 95% 28%)"></span>
+        <span></span><span class="b" style="background:hsl(200 35% 45%)"></span><span class="b" style="background:hsl(200 65% 45%)"></span><span class="b" style="background:hsl(200 95% 45%)"></span>
+        <span>light</span><span class="b" style="background:hsl(200 35% 64%)"></span><span class="b" style="background:hsl(200 65% 64%)"></span><span class="b" style="background:hsl(200 95% 64%)"></span>
+      </div>
+    </article>
+    <article class="obs">
+      <h3>Red for detail, blue for ideas?</h3>
+      <p><span class="tag d">sourced, disputed</span>One influential study reported that red helped detail-oriented work and blue helped creative work. Later research found task difficulty changed the result, and an adequately powered replication failed to reproduce the priming effect.<sup><a href="#r12">12</a><a href="#r13">13</a><a href="#r14">14</a></sup></p>
+      <div class="claim">
+        Red sharpens the eye for detail; blue frees the mind to invent.
+        <svg viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true" class="ink-svg"><path class="ink w2" d="M2 40 Q80 30 150 38 T298 30" stroke="#9A3A20" style="--d:.6s; --dur:1.1s"/></svg>
+      </div>
+      <p class="cave"><b>Cave</b>Treat cognition-by-color claims as hypotheses, never as frontend rules.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ================= f. 2r ================= -->
+<section class="folio" id="f2r" data-title="Six principles of the workshop">
+  <span class="folio-no recto">f. 2r</span>
+  <div class="body">
+    <p class="eyebrow">Dei principi · Operating principles</p>
+    <h2>Six principles of the workshop</h2>
+    <p class="intro">Each principle pairs a design rule with the evidence behind it and the practical catch. The rules are inferred; the reasons are sourced.</p>
+  </div>
+  <aside class="margin">
+    <div class="note">
+      <span class="lbl">Nota</span>
+      <p class="mirror" tabindex="0">One action color, repeated only for equivalent actions. Everything else stays quieter.</p>
+    </div>
+  </aside>
+  <div class="wide six">
+    <article class="principle">
+      <svg class="emb ink-svg" data-emblem="sales" viewBox="0 0 112 72" aria-hidden="true"></svg>
+      <h3>Sales</h3>
+      <p><span class="tag i">inferred</span>Give the primary call to action a unique role color that is uncommon elsewhere on the page.</p>
+      <p class="why"><span class="tag s">sourced</span>A famous red-over-green test produced 21% more clicks. Its own reading: the red control stood out on a green-dominant page, not that red always wins.<sup><a href="#r3">3</a></sup></p>
+      <p class="cave"><b>Cave</b>A loud button can raise clicks while lowering qualified leads or completed purchases. Measure the entire funnel.</p>
+    </article>
+    <article class="principle">
+      <svg class="emb ink-svg" data-emblem="positivity" viewBox="0 0 112 72" aria-hidden="true"></svg>
+      <h3>Positivity</h3>
+      <p><span class="tag i">inferred</span>Use bright surfaces, restrained saturation, generous whitespace and warm accents for rewards or highlights.</p>
+      <p class="why"><span class="tag s">sourced</span>Marketing research links higher saturation with excitement, and higher lightness with relaxation and liking.<sup><a href="#r17">17</a><a href="#r11">11</a></sup></p>
+      <p class="cave"><b>Cave</b>High saturation across the whole interface creates noise and weakens the call to action.</p>
+    </article>
+    <article class="principle">
+      <svg class="emb ink-svg" data-emblem="trust" viewBox="0 0 112 72" aria-hidden="true"></svg>
+      <h3>Trust</h3>
+      <p><span class="tag i">inferred</span>Use blue, teal, charcoal or deep green as the structural brand color, then add a distinct action color.</p>
+      <p class="why"><span class="tag s">sourced</span>Brand experiments link blue with competence; cross-cultural work rated blue labels more secure, trustworthy and dependable than red.<sup><a href="#r9">9</a><a href="#r18">18</a></sup></p>
+      <p class="cave"><b>Cave</b>An all-blue page can make a blue button disappear, and it may look generic.</p>
+    </article>
+    <article class="principle">
+      <svg class="emb ink-svg" data-emblem="urgency" viewBox="0 0 112 72" aria-hidden="true"></svg>
+      <h3>Urgency</h3>
+      <p><span class="tag i">inferred</span>Restrict red to deadlines, errors, destructive actions, or a sales button that has been tested.</p>
+      <p class="why"><span class="tag s">sourced</span>Red can signal excitement, danger, mistakes or avoidance, depending on context.<sup><a href="#r1">1</a><a href="#r12">12</a><a href="#r9">9</a></sup></p>
+      <p class="cave"><b>Cave</b>If red means both Buy and Delete, the system loses its semantic consistency.</p>
+    </article>
+    <article class="principle">
+      <svg class="emb ink-svg" data-emblem="reuse" viewBox="0 0 112 72" aria-hidden="true"></svg>
+      <h3>Reusability</h3>
+      <p><span class="tag i">inferred</span>Separate brand, action, surface and state roles, so each theme can replace values without touching component logic.</p>
+      <p class="why"><span class="tag s">sourced</span>Material Design groups colors into roles; USWDS defines separate families for info, error, warning, success, emergency and disabled.<sup><a href="#r19">19</a><a href="#r20">20</a></sup></p>
+      <p class="cave"><b>Cave</b>Hex values written straight into components cause drift and expensive redesigns.</p>
+    </article>
+    <article class="principle">
+      <svg class="emb ink-svg" data-emblem="comprehension" viewBox="0 0 112 72" aria-hidden="true"></svg>
+      <h3>Comprehension</h3>
+      <p><span class="tag i">inferred</span>Keep the same role-to-color mapping across every page and product.</p>
+      <p class="why"><span class="tag s">sourced</span>W3C cognitive guidance recommends consistent colors and appearance for controls, states and focus indicators.<sup><a href="#r21">21</a></sup></p>
+      <p class="cave"><b>Cave</b>Campaign teams often add one-off button colors that break learned behavior.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ================= f. 2v ================= -->
+<section class="folio" id="f2v" data-title="Register of pigments">
+  <span class="folio-no verso">f. 2v</span>
+  <div class="body">
+    <p class="eyebrow">Dei pigmenti · Color families</p>
+    <h2>Register of pigments</h2>
+    <p class="intro">Ten families with the signal each tends to carry, where it serves, and where it misleads. These are starting associations, not deterministic effects.</p>
+  </div>
+  <aside class="margin">
+    <div class="note">
+      <span class="lbl">Nota</span>
+      <p class="mirror" tabindex="0">Leonardo counted six simple colors in his treatise on painting: white, yellow, green, blue, red and black.</p>
+    </div>
+  </aside>
+  <div class="wide register">
+    <article class="pigment"><canvas class="swatch" data-color="#075985" aria-hidden="true"></canvas><h3>Blue</h3><span class="hex">Sample #075985</span><p class="sig">Competence, stability, lower arousal</p><dl><dt>Serves</dt><dd>B2B, finance, healthcare, navigation, information</dd><dt>Misleads</dt><dd>When every link, card and button is the same blue</dd><dt>Evidence</dt><dd><span class="tag s">sourced</span>Blue–competence is experimentally supported; context still moderates it.<sup><a href="#r9">9</a></sup></dd></dl></article>
+    <article class="pigment"><canvas class="swatch" data-color="#B91C1C" aria-hidden="true"></canvas><h3>Red</h3><span class="hex">Sample #B91C1C</span><p class="sig">Excitement, urgency, vigilance, danger</p><dl><dt>Serves</dt><dd>Sale deadlines, destructive actions, errors, limited button tests</dd><dt>Misleads</dt><dd>Large learning backgrounds, routine success, calm healthcare flows</dd><dt>Evidence</dt><dd><span class="tag d">contextual</span>Linked with excitement; can induce avoidance or vigilance in achievement contexts.<sup><a href="#r1">1</a><a href="#r12">12</a></sup></dd></dl></article>
+    <article class="pigment"><canvas class="swatch" data-color="#C2410C" aria-hidden="true"></canvas><h3>Orange</h3><span class="hex">Sample #C2410C</span><p class="sig">Energy, warmth, action</p><dl><dt>Serves</dt><dd>Primary button on cool or neutral pages, onboarding progress, promotions</dd><dt>Misleads</dt><dd>Body text, dense dashboards, weak white-text contrast</dd><dt>Evidence</dt><dd><span class="tag i">inferred</span>Chosen for salience and warmth; no universal conversion advantage.<sup><a href="#r3">3</a></sup></dd></dl></article>
+    <article class="pigment"><canvas class="swatch" data-color="#F59E0B" aria-hidden="true"></canvas><h3>Yellow &amp; amber</h3><span class="hex">Sample #F59E0B</span><p class="sig">Optimism, highlight, caution</p><dl><dt>Serves</dt><dd>Rewards, badges, warning containers, game rewards</dd><dt>Misleads</dt><dd>White text on yellow; large reading surfaces</dd><dt>Evidence</dt><dd><span class="tag i">inferred</span>A high-lightness accent; pair it with dark text.</dd></dl></article>
+    <article class="pigment"><canvas class="swatch" data-color="#166534" aria-hidden="true"></canvas><h3>Green</h3><span class="hex">Sample #166534</span><p class="sig">Progress, completion, nature, positive state</p><dl><dt>Serves</dt><dd>Sustainability, success, availability, growth</dd><dt>Misleads</dt><dd>As the only sign of success; as the button on a green brand</dd><dt>Evidence</dt><dd><span class="tag s">sourced + inferred</span>Usually means success, but W3C requires a cue beyond color.<sup><a href="#r20">20</a><a href="#r7">7</a></sup></dd></dl></article>
+    <article class="pigment"><canvas class="swatch" data-color="#0F766E" aria-hidden="true"></canvas><h3>Teal</h3><span class="hex">Sample #0F766E</span><p class="sig">Clean, balanced, contemporary</p><dl><dt>Serves</dt><dd>Health, wellness, climate tech, calm product surfaces</dd><dt>Misleads</dt><dd>Neighboring teal shades as the only state difference</dd><dt>Evidence</dt><dd><span class="tag i">inferred</span>Category fit outweighs any universal emotional effect.</dd></dl></article>
+    <article class="pigment"><canvas class="swatch" data-color="#6D28D9" aria-hidden="true"></canvas><h3>Purple</h3><span class="hex">Sample #6D28D9</span><p class="sig">Imagination, premium creativity, distinctiveness</p><dl><dt>Serves</dt><dd>AI, learning, creator products, quizzes, beauty</dd><dt>Misleads</dt><dd>Enterprise risk controls; long text fields at high saturation</dd><dt>Evidence</dt><dd><span class="tag i">inferred</span>Strong differentiation; meaning varies by brand and culture.</dd></dl></article>
+    <article class="pigment"><canvas class="swatch" data-color="#BE185D" aria-hidden="true"></canvas><h3>Pink &amp; magenta</h3><span class="hex">Sample #BE185D</span><p class="sig">Expressive, social, playful</p><dl><dt>Serves</dt><dd>Beauty, creator communities, youth and family accents</dd><dt>Misleads</dt><dd>Gender stereotyping; use without audience validation</dd><dt>Evidence</dt><dd><span class="tag i">inferred</span>Audience congruence matters more than convention.</dd></dl></article>
+    <article class="pigment"><canvas class="swatch" data-color="#1C1917" aria-hidden="true"></canvas><h3>Black &amp; charcoal</h3><span class="hex">Sample #1C1917</span><p class="sig">Authority, focus, sophistication</p><dl><dt>Serves</dt><dd>Luxury, professional services, developer tools, gaming surfaces</dd><dt>Misleads</dt><dd>Pure-black walls with pure-white text on every screen</dd><dt>Evidence</dt><dd><span class="tag s">sourced + inferred</span>Reads as sophisticated; extreme contrast can trigger some users.<sup><a href="#r11">11</a><a href="#r4">4</a></sup></dd></dl></article>
+    <article class="pigment"><canvas class="swatch" data-color="#94A3B8" aria-hidden="true"></canvas><h3>Grey &amp; white</h3><span class="hex">Sample #94A3B8</span><p class="sig">Neutrality, hierarchy, space</p><dl><dt>Serves</dt><dd>Surfaces, cards, comparison tables, product imagery</dd><dt>Misleads</dt><dd>Low-contrast grey text; active controls that look disabled</dd><dt>Evidence</dt><dd><span class="tag s">sourced</span>Readability depends on luminance contrast more than hue.<sup><a href="#r6">6</a></sup></dd></dl></article>
+  </div>
+</section>
+
+<!-- ================= f. 3r ================= -->
+<section class="folio" id="f3r" data-title="The three-layer machine">
+  <span class="folio-no recto">f. 3r</span>
+  <div class="body">
+    <p class="eyebrow">Della macchina · Palette architecture</p>
+    <h2>The three-layer machine</h2>
+    <p class="intro">A reusable palette is a gear train. Raw pigments drive meanings, meanings drive components, and a new theme only swaps the first wheel.</p>
+  </div>
+  <aside class="margin">
+    <div class="note">
+      <span class="lbl">Nota</span>
+      <p class="mirror" tabindex="0">Themes swap values. Components keep consuming the same role tokens.</p>
+    </div>
+  </aside>
+  <div class="wide machine">
+    <svg id="gears" class="ink-svg" viewBox="20 0 420 330" role="img" aria-label="Three meshing gears labeled Primitive, Semantic and Component. The same orange pigment sits on all three."></svg>
+    <div>
+      <ol class="layers">
+        <li><span class="num">I</span><div><b>Primitive</b><br>Raw ramps such as <code>blue-700</code>, <code>orange-700</code>, <code>slate-950</code>.</div></li>
+        <li><span class="num">II</span><div><b>Semantic</b><br>Intent tokens such as <code>color-action</code>, <code>color-success</code>, <code>color-error</code>.</div></li>
+        <li><span class="num">III</span><div><b>Component</b><br>Contextual aliases such as <code>button-primary-bg</code>, <code>quiz-correct-border</code>.</div></li>
+      </ol>
+      <p class="calc"><span class="tag s">sourced</span>This follows mature practice: Material defines primary, secondary, tertiary, error, surface and outline roles; USWDS keeps state colors in explicit semantic families.<sup><a href="#r19">19</a><a href="#r20">20</a></sup></p>
+      <ul class="tok" id="tokList" aria-label="Semantic tokens from the report"></ul>
+      <p class="calc"><span class="tag c">calculated</span>White text reaches <span id="calcLine">5.18 : 1 on action, 7.56 : 1 on brand, 7.13 : 1 on success and 6.47 : 1 on error</span>. Every real state still needs testing: hover, disabled, gradients, overlays and text over images.<sup><a href="#r6">6</a></sup></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= f. 3v ================= -->
+<section class="folio" id="f3v" data-title="The balance of contrast">
+  <span class="folio-no verso">f. 3v</span>
+  <div class="body">
+    <p class="eyebrow">Della bilancia · Accessibility gates</p>
+    <h2>The balance of contrast</h2>
+    <p class="intro">Accessibility is the one law that is not negotiable. Set a letter color against a ground and weigh the pair: normal text needs 4.5 : 1, large text and component boundaries need 3 : 1, and color must never be the only signal.<sup><a href="#r4">4</a><a href="#r5">5</a><a href="#r6">6</a><a href="#r7">7</a></sup></p>
+  </div>
+  <aside class="margin">
+    <div class="note">
+      <span class="lbl">Nota</span>
+      <p class="mirror" tabindex="0">Weigh the rendered fill, not the swatch. Overlays, gradients and photographs change the pair.</p>
+    </div>
+  </aside>
+  <div class="wide bal">
+    <div class="pick">
+      <span class="row-lbl" id="fgLbl">Letter</span>
+      <div class="chiprow" id="fgRow" role="group" aria-labelledby="fgLbl"></div>
+      <span class="row-lbl" id="bgLbl" style="margin-top:.5rem">Ground</span>
+      <div class="chiprow" id="bgRow" role="group" aria-labelledby="bgLbl"></div>
+      <div class="specimen" id="specimen">
+        <span class="big">Start free trial</span>
+        <span>Normal text at reading size looks like this sentence.</span>
+        <span><i class="ring" aria-hidden="true"></i>A component boundary or focus ring</span>
+      </div>
+      <span class="row-lbl" style="margin-top:.6rem">Pairs from the report</span>
+      <div class="presets" id="presets"></div>
+    </div>
+    <div>
+      <svg id="balance" class="ink-svg" viewBox="0 0 440 340" aria-hidden="true">
+        <path class="w1" d="M180 70 A40 40 0 0 1 260 70" stroke-dasharray="2 3"/>
+        <path class="ink w15" d="M168 324 Q220 304 272 324 Z" fill="url(#hatch)"/>
+        <line class="ink w2" x1="220" y1="314" x2="220" y2="78"/>
+        <path class="ink w1" d="M206 92 L220 74 L234 92"/>
+        <g id="beam">
+          <line class="w2" x1="70" y1="70" x2="370" y2="70"/>
+          <line class="w1" x1="220" y1="70" x2="220" y2="34"/>
+          <circle cx="70" cy="70" r="3.5" fill="#33241A"/>
+          <circle cx="370" cy="70" r="3.5" fill="#33241A"/>
+          <circle cx="220" cy="70" r="5" fill="#EADCBB"/>
+        </g>
+        <g id="panL">
+          <line class="w05" x1="0" y1="0" x2="-40" y2="96"/><line class="w05" x1="0" y1="0" x2="40" y2="96"/>
+          <rect x="-28" y="66" width="56" height="28" fill="#F6EEDC" class="w1"/>
+          <text id="wL" class="bal-t" x="0" y="86" font-size="19">5.18</text>
+          <path class="w15" d="M-48 96 Q0 132 48 96 Z" fill="url(#hatch)"/>
+          <text class="bal-h" x="0" y="150">your pair</text>
+        </g>
+        <g id="panR">
+          <line class="w05" x1="0" y1="0" x2="-40" y2="96"/><line class="w05" x1="0" y1="0" x2="40" y2="96"/>
+          <rect x="-28" y="66" width="56" height="28" fill="#F6EEDC" class="w1"/>
+          <text class="bal-t" x="0" y="86" font-size="19">4.5</text>
+          <path class="w15" d="M-48 96 Q0 132 48 96 Z" fill="url(#hatch)"/>
+          <text class="bal-h" x="0" y="150">the AA law</text>
+        </g>
+      </svg>
+      <div class="readout" aria-live="polite">
+        <span class="r" id="ratioOut">5.18 : 1</span>
+        <span class="muted small"><span class="tag c">calculated</span><span id="pairOut">#FFFFFF on #C2410C</span></span>
+      </div>
+      <ul class="verdicts" id="verdicts"></ul>
+    </div>
+    <div style="grid-column:1 / -1; min-width:0">
+      <div class="scroll">
+        <table class="gates">
+          <thead><tr><th scope="col">Gate</th><th scope="col">Requirement</th><th scope="col">Implementation</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Normal text</th><td><span class="tag s">sourced</span>At least 4.5 : 1.<sup><a href="#r6">6</a></sup></td><td>Test the label against the actual rendered fill, overlays included.</td></tr>
+            <tr><th scope="row">Large text</th><td><span class="tag s">sourced</span>At least 3 : 1; WCAG defines large by size and weight.<sup><a href="#r4">4</a><a href="#r6">6</a></sup></td><td>Don’t assume a marketing heading qualifies. Check its computed size and weight.</td></tr>
+            <tr><th scope="row">Components &amp; focus</th><td><span class="tag s">sourced</span>Required visual information needs 3 : 1 against adjacent colors.<sup><a href="#r4">4</a><a href="#r5">5</a></sup></td><td>Test borders, checked states, focus rings, toggles, input errors and selected tabs.</td></tr>
+            <tr><th scope="row">Meaning</th><td><span class="tag s">sourced</span>Color cannot be the only way information is conveyed.<sup><a href="#r7">7</a></sup></td><td>Add an icon, text, shape, underline, pattern or position.</td></tr>
+            <tr><th scope="row">Consistency</th><td><span class="tag s">sourced</span>Equivalent controls and states look the same across pages.<sup><a href="#r21">21</a></sup></td><td>Enforce semantic tokens and component variants.</td></tr>
+            <tr><th scope="row">Color vision</th><td><span class="tag s">sourced</span>About 1 in 12 men has a color-vision deficiency, mostly red–green.<sup><a href="#r16">16</a><a href="#r22">22</a></sup></td><td>Inspect in grayscale and common simulations; never decide by red versus green alone.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="cvd-fig">
+        <svg id="twelve" viewBox="0 0 300 44" role="img" aria-label="Twelve figures, one of them hatched: about one in twelve men."></svg>
+        <span class="hand" style="font-size:1.15rem">one in twelve men sees red and green differently</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= f. 4r ================= -->
+<section class="folio" id="f4r" data-title="Atlas of eighteen trades">
+  <span class="folio-no recto">f. 4r</span>
+  <div class="body">
+    <p class="eyebrow">Delle arti · Niche palette matrix</p>
+    <h2>Atlas of eighteen trades</h2>
+    <p class="intro">A starting palette for each kind of business, drawn as a study of a real page. “Action” is the primary conversion control, not an order to color every button. Switch the eye to grayscale or a color-vision simulation to test each one.</p>
+  </div>
+  <aside class="margin">
+    <div class="note">
+      <span class="lbl">Nota</span>
+      <p class="mirror" tabindex="0">Open the quiz study under deuteranopia. Without the tick and the cross, correct and wrong collapse into one color.</p>
+    </div>
+  </aside>
+  <div class="wide atlas">
+    <ul class="trades" id="trades" aria-label="Choose a trade"></ul>
+    <div class="study">
+      <svg id="plate" viewBox="0 0 540 350" role="img" aria-labelledby="studyName"></svg>
+      <div class="cvd-tools" role="group" aria-label="Simulate vision">
+        <span class="row-lbl">View as</span>
+        <button class="seg" type="button" data-cvd="" aria-pressed="true">Typical vision</button>
+        <button class="seg" type="button" data-cvd="cvd-gray" aria-pressed="false">Grayscale</button>
+        <button class="seg" type="button" data-cvd="cvd-deut" aria-pressed="false">Deuteranopia</button>
+        <button class="seg" type="button" data-cvd="cvd-prot" aria-pressed="false">Protanopia</button>
+      </div>
+      <div class="study-text" aria-live="polite">
+        <h3 id="studyName">Sales landing page</h3>
+        <div style="display:grid; gap:.6rem; min-width:0">
+          <p id="studyUse"></p>
+          <p class="cave" id="studyCave"></p>
+        </div>
+        <div style="display:grid; gap:.6rem; min-width:0">
+          <ul class="chips" id="studyChips"></ul>
+          <p class="small muted" id="studyCalc"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= f. 4v ================= -->
+<section class="folio" id="f4v" data-title="By the kind of interface">
+  <span class="folio-no verso">f. 4v</span>
+  <div class="body">
+    <p class="eyebrow">Degli usi · Use by interface type</p>
+    <h2>By the kind of interface</h2>
+    <p class="intro">The same palette behaves differently on a landing page, a checkout, a game or a dashboard. Six workshop notes, one for each.</p>
+  </div>
+  <aside class="margin">
+    <div class="note">
+      <span class="lbl">Nota</span>
+      <p class="mirror" tabindex="0">Enemy red, error red, purchase red: three roles that must never share one color.</p>
+    </div>
+  </aside>
+  <div class="wide six">
+    <article class="iface">
+      <h3>Marketing page</h3>
+      <p><span class="tag i">inferred</span>Brand color for recognition and structure, one separate action color for the conversion path. Keep hero, social proof, offer and pricing backgrounds mostly neutral so the button keeps priority, and repeat the action color only for equivalent actions.</p>
+      <p class="src"><span class="tag s">sourced</span>Color works as an attention, message and affect cue; higher saturation raises excitement and lighter values raise relaxation and liking. Concentrate saturation instead of spreading it.<sup><a href="#r17">17</a></sup></p>
+    </article>
+    <article class="iface">
+      <h3>Button only</h3>
+      <p><span class="tag i">inferred</span>Choose its color in this order:</p>
+      <ol class="chain"><li>role clarity</li><li>page contrast</li><li>label contrast</li><li>state differences</li><li>brand fit</li><li>psychological association</li></ol>
+      <p>Primary buttons are usually filled, secondary ones quieter, and destructive actions stay red even when another color would stand out more.</p>
+      <p class="src"><span class="tag c">calculated</span>White on #C2410C 5.18 : 1, white on #075985 7.56 : 1, white on #6D28D9 7.10 : 1, #111827 on #F59E0B 8.26 : 1.<sup><a href="#r6">6</a><a href="#r23">23</a></sup></p>
+    </article>
+    <article class="iface">
+      <h3>Store &amp; checkout</h3>
+      <p><span class="tag i">inferred</span>Neutral product surfaces, one add-to-cart color, a distinct but related checkout action, and written labels for stock, discounts, validation and payment. Discounts may use red or orange; the purchase button should not look like an error unless a test proves it pays.</p>
+      <p class="src"><span class="tag s">sourced</span>Cool store environments have often been preferred to warm ones; warm colors raise arousal, cool colors can relax, and shopping motivation moderates both.<sup><a href="#r17">17</a></sup></p>
+    </article>
+    <article class="iface">
+      <h3>Gaming</h3>
+      <p><span class="tag i">inferred</span>Match saturation to intensity. Casual and puzzle games suit bright surfaces and a stable play color; competitive games can carry darker surfaces and higher-chroma accents. Keep faction colors apart from interface meanings.</p>
+      <p class="src"><span class="tag s">sourced</span>Similar functions and states should look the same, above all in fast interfaces where a color is learned once and recognized instantly.<sup><a href="#r21">21</a></sup></p>
+    </article>
+    <article class="iface">
+      <h3>Education &amp; quizzes</h3>
+      <p><span class="tag i">inferred</span>A calm structural color for navigation and a distinct progress or action color. Save red for final incorrect or error feedback, add an icon and a text label, and never bathe the assessment in red.</p>
+      <p class="src"><span class="tag d">sourced, mixed</span>Red–blue performance findings vary by task, difficulty and study; exam research found no meaningful red-versus-green effect. Color organizes learning; it is not a cognitive booster.<sup><a href="#r24">24</a><a href="#r13">13</a><a href="#r14">14</a></sup></p>
+    </article>
+    <article class="iface">
+      <h3>Business dashboards</h3>
+      <p><span class="tag i">inferred</span>Low-saturation surfaces by default, with chroma only for action, exception and status. In charts and KPIs, pair color with labels, arrows, line styles, shapes or patterns, and keep brand colors apart from risk colors.</p>
+      <p class="src"><span class="tag s">sourced</span>W3C requires a visible alternative when color carries information, and states and required boundaries need 3 : 1 against neighbors.<sup><a href="#r7">7</a><a href="#r4">4</a></sup></p>
+    </article>
+  </div>
+</section>
+
+<!-- ================= f. 5r ================= -->
+<section class="folio" id="f5r" data-title="The experiment">
+  <span class="folio-no recto">f. 5r</span>
+  <div class="body">
+    <p class="eyebrow">Dell’esperienza · Conversion validation</p>
+    <h2>The experiment</h2>
+    <p class="intro">Every palette is a hypothesis. Leonardo trusted experience over authority; so should the funnel. Run the steps in order.</p>
+  </div>
+  <aside class="margin">
+    <div class="note">
+      <span class="lbl">Nota</span>
+      <p class="mirror" tabindex="0">A click is not the business event. Count the lead, the checkout, the finished lesson.</p>
+    </div>
+  </aside>
+  <div class="wide exp">
+    <ol class="steps">
+      <li><span class="num">I</span><span>Define the business event: a qualified lead, a completed checkout, a finished lesson or a retained player, not merely a click.</span></li>
+      <li><span class="num">II</span><span>Audit the page’s dominant colors and reserve one role for the primary action.</span></li>
+      <li><span class="num">III</span><span>Verify contrast and non-color cues before experimenting.</span></li>
+      <li><span class="num">IV</span><span>Test one variable at a time. Don’t change color, copy, size and placement together.</span></li>
+      <li><span class="num">V</span><span>Run through a complete business cycle and to a sample threshold declared in advance.</span></li>
+      <li><span class="num">VI</span><span>Inspect downstream quality, mobile behavior, accessibility failures and segment differences.</span></li>
+      <li><span class="num">VII</span><span>Re-test after material changes to layout, brand palette, offer, traffic source or audience.</span></li>
+    </ol>
+    <div class="tallies">
+      <p class="quote">In a 2026 dataset of 32 button-color tests, most changed nothing, and the winning direction varied by page.<sup><a href="#r25">25</a></sup></p>
+      <div class="tally"><svg id="tal1" class="ink-svg" aria-hidden="true"></svg><div class="lbl"><span class="n">26</span><span>changed nothing measurable (81%)</span></div></div>
+      <div class="tally"><svg id="tal2" class="ink-svg" aria-hidden="true"></svg><div class="lbl"><span class="n" style="color:var(--sanguine)">5</span><span>beat their control (16%)</span></div></div>
+      <div class="tally"><svg id="tal3" class="ink-svg" aria-hidden="true"></svg><div class="lbl"><span class="n">1</span><span>other result</span></div></div>
+      <p class="small muted"><span class="tag s">sourced</span>Counts are rounded from the reported 81% and 16% of 32 tests. Contrast and context are good priors; actual conversion impact has to be measured locally.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= f. 5v ================= -->
+<section class="folio" id="f5v" data-title="The crossroads">
+  <span class="folio-no verso">f. 5v</span>
+  <div class="body">
+    <p class="eyebrow">Del bivio · Decision framework</p>
+    <h2>The crossroads</h2>
+    <p class="intro">Six questions to ask before choosing a palette. Each one forks; follow the branch that describes the product.</p>
+  </div>
+  <aside class="margin">
+    <div class="note">
+      <span class="lbl">Nota</span>
+      <p class="mirror" tabindex="0">If green is already the brand, the button must be something else.</p>
+    </div>
+  </aside>
+  <div class="wide six">
+    <article class="fork"><h3>Is the product high-trust or high-risk?</h3><div class="branches"><p><span class="b">Yes</span><span class="tag i">inferred</span>Start with blue, teal or slate structure and conservative saturation.</p><p><span class="b">No</span>More expressive brand hues are viable.</p></div></article>
+    <article class="fork"><h3>Is the experience recreational or sensory?</h3><div class="branches"><p><span class="b">Yes</span><span class="tag i">inferred</span>Raise saturation and palette breadth, keeping one action role.</p><p><span class="b">No</span>Keep surfaces neutral and chroma sparse.</p></div></article>
+    <article class="fork"><h3>Is the urgency genuine?</h3><div class="branches"><p><span class="b">Yes</span><span class="tag i">inferred</span>Use a warm accent locally, with explicit deadline or status copy.</p><p><span class="b">No</span>Don’t manufacture urgency with persistent red.</p></div></article>
+    <article class="fork"><h3>Is green already the brand color?</h3><div class="branches"><p><span class="b">Yes</span><span class="tag i">inferred</span>Choose a blue, purple, orange or other verified contrasting button.</p><p><span class="b">No</span>Green stays free for success states.</p></div></article>
+    <article class="fork"><h3>Does color carry status or correctness?</h3><div class="branches"><p><span class="b">Yes</span><span class="tag s">sourced</span>Add text, an icon or a shape and verify 3 : 1 differentiation.<sup><a href="#r7">7</a></sup></p><p><span class="b">No</span>Decorative color may stand alone when it carries no information.</p></div></article>
+    <article class="fork"><h3>Is the audience international?</h3><div class="branches"><p><span class="b">Yes</span><span class="tag s">sourced</span>Validate associations in each target market; meanings differ across cultures.<sup><a href="#r26">26</a><a href="#r18">18</a></sup></p><p><span class="b">No</span>Local brand research still beats generic color charts.</p></div></article>
+  </div>
+</section>
+
+<!-- ================= f. 6r ================= -->
+<section class="folio" id="f6r" data-title="The recommended palette">
+  <span class="folio-no recto">f. 6r</span>
+  <div class="body">
+    <p class="eyebrow">Della tavolozza · Recommended default</p>
+    <h2>The recommended palette</h2>
+    <p class="intro">A bright, positive, conversion-oriented starting system: clear semantic separation, a page that stays light, a warm focal role for the button, and text pairs dark enough for AA.<span class="tag i" style="margin-left:.4rem">inferred</span></p>
+    <p class="intro">Change the values when category, brand equity, local culture, product imagery or experiments point elsewhere. Keep the architecture.</p>
+  </div>
+  <aside class="margin">
+    <div class="note">
+      <span class="lbl">Nota · still open</span>
+      <p class="mirror" tabindex="0">Which niches get production-ready light and dark tokens, and which real funnel hosts the first validation test?</p>
+    </div>
+  </aside>
+  <div class="wide">
+    <div class="pans" id="pans"></div>
+    <div class="copyrow" style="margin-top:1.6rem">
+      <button class="btn primary" type="button" id="copyCss">Copy the CSS tokens</button>
+      <span class="copied" id="copied" aria-live="polite"></span>
+    </div>
+    <details class="css"><summary>Show the CSS</summary><pre id="cssOut"></pre></details>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= f. 6v colophon ================= -->
+<footer class="folio" id="f6v" data-title="Sources and colophon">
+  <span class="folio-no verso">f. 6v</span>
+  <div class="body">
+    <p class="eyebrow">Delle fonti · Sources</p>
+    <h2>Sources and colophon</h2>
+    <p class="intro">Source report: “Color Psychology for Conversion-Oriented Frontend Design”, a Perplexity research asset checked 13 October 2026. <a href="https://www.perplexity.ai/computer/a/603726b9-7a8c-4ddf-bfb1-bb8137f161de">Open the original</a>.</p>
+  </div>
+  <aside class="margin">
+    <div class="note">
+      <span class="lbl">Nota</span>
+      <p class="mirror" tabindex="0">The hatching on these pages runs from upper left to lower right, the way left-handed Leonardo shaded.</p>
+    </div>
+  </aside>
+  <div class="wide" style="display:grid; gap:2.4rem">
+    <ol class="refs">
+      <li id="r1"><a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0040333">Psychological context moderates the influence of red on approach and avoidance</a> <span class="pub">PLOS ONE</span></li>
+      <li id="r2"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4383146/">Color and psychological functioning: a review</a> <span class="pub">PMC</span></li>
+      <li id="r3"><a href="https://blog.adobe.com/en/publish/2017/03/29/the-impact-of-color-on-conversion-rates">The impact of color on conversion rates</a> <span class="pub">Adobe Blog</span></li>
+      <li id="r4"><a href="https://design-system.w3.org/settings/">Settings</a> <span class="pub">W3C Design System</span></li>
+      <li id="r5"><a href="https://www.w3.org/TR/wcag2mobile-22/">Guidance on applying WCAG 2.2 to mobile applications</a> <span class="pub">W3C</span></li>
+      <li id="r6"><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum">Understanding SC 1.4.3: Contrast (Minimum)</a> <span class="pub">W3C WAI</span></li>
+      <li id="r7"><a href="https://www.w3.org/WAI/WCAG21/Understanding/use-of-color">Understanding SC 1.4.1: Use of Color</a> <span class="pub">W3C WAI</span></li>
+      <li id="r8"><a href="https://econpapers.repec.org/article/muljyf1hn/doi_3a10.1431_2f108358_3ay_3a2024_3ai_3a2_3ap_3a329-358.htm">Impact of color on consumer’s psychology: systematic literature review</a> <span class="pub">Oubdi &amp; Ouazzani Touhami</span></li>
+      <li id="r9"><a href="https://link.springer.com/content/pdf/10.1007/s11747-010-0245-y.pdf">Exciting red and competent blue: the importance of color in marketing</a> <span class="pub">Labrecque &amp; Milne</span></li>
+      <li id="r10"><a href="https://www.semanticscholar.org/paper/The-interactive-effects-of-colors-and-products-on-Bottomley-Doyle/553ace4aba7f25c15d990cf74ba82599f907c475">The interactive effects of colors and products on perceptions of brand logo appropriateness</a> <span class="pub">Bottomley &amp; Doyle</span></li>
+      <li id="r11"><a href="https://onlinelibrary.wiley.com/doi/10.1002/mar.22228">Darker logos are seen as for-profits and lighter …</a> <span class="pub">Psychology &amp; Marketing</span></li>
+      <li id="r12"><a href="https://pdodds.w3.uvm.edu/files/papers/others/2009/mehta2009a.pdf">Blue or red? Exploring the effect of color on cognitive task performances</a> <span class="pub">Mehta &amp; Zhu, 2009</span></li>
+      <li id="r13"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4880552/">Exploring the effect of red and blue on cognitive task performances</a> <span class="pub">PMC</span></li>
+      <li id="r14"><a href="https://forrt.org/flora-replication-atlas/doi/10.1126/science.1169144/">Blue or red? Replication record</a> <span class="pub">FORRT replication atlas</span></li>
+      <li id="r15"><a href="https://www.w3.org/WAI/WCAG22/Understanding/">Understanding WCAG 2.2</a> <span class="pub">W3C WAI</span></li>
+      <li id="r16"><a href="https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/color-blindness">Color blindness</a> <span class="pub">National Eye Institute</span></li>
+      <li id="r17"><a href="https://onlinelibrary.wiley.com/doi/10.1002/mar.20597">The marketers’ prismatic palette: a review of color research</a> <span class="pub">Psychology &amp; Marketing</span></li>
+      <li id="r18"><a href="https://scholarsbank.uoregon.edu/server/api/core/bitstreams/8a0f6c33-bc69-4753-9ec3-2ef54e01ceba/content">A cross-cultural analysis of brand logo color</a> <span class="pub">Scholars’ Bank, University of Oregon</span></li>
+      <li id="r19"><a href="https://m3.material.io/styles/color/roles">Color roles</a> <span class="pub">Material Design 3</span></li>
+      <li id="r20"><a href="https://designsystem.digital.gov/design-tokens/color/state-tokens/">State color tokens</a> <span class="pub">USWDS</span></li>
+      <li id="r21"><a href="https://www.w3.org/WAI/WCAG2/supplemental/patterns/o1p03-consistent-design/">Use a consistent visual design</a> <span class="pub">W3C cognitive accessibility</span></li>
+      <li id="r22"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12385717/">A global perspective of color vision deficiency</a> <span class="pub">PMC</span></li>
+      <li id="r23"><a href="https://bdow.com/stories/call-to-action-mistakes/">9 common call-to-action mistakes</a> <span class="pub">BDOW!</span></li>
+      <li id="r24"><a href="https://link.springer.com/article/10.3758/s13423-016-1009-6">Red vs. green: does the exam booklet color matter in higher education? Not likely</a> <span class="pub">Psychonomic Bulletin &amp; Review</span></li>
+      <li id="r25"><a href="https://www.mida.so/change-types/cta-color">Do CTA colour A/B tests work? 32 tests measured</a> <span class="pub">Mida</span></li>
+      <li id="r26"><a href="https://link.springer.com/chapter/10.1007/978-3-319-91716-0_32">Influence of color perception on consumer behavior</a> <span class="pub">Springer</span></li>
+    </ol>
+    <div class="make">
+      <div><h3>Type</h3><p>IM Fell English, a revival of the seventeenth-century Fell types, for headings; EB Garamond for reading; Felipa for the marginal hand.</p></div>
+      <div><h3>Pigment</h3><p>Every wash is painted live in the browser: dozens of thin, slightly displaced glazes laid one over another, as watercolor builds on paper.</p></div>
+      <div><h3>Motion</h3><p>Ink lines draw themselves on load and during the film. The wheel turns once every five minutes; the gears and the balance respond to the research.</p></div>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<div class="filmbar" id="filmbar" hidden>
+  <span class="reel">Reel</span>
+  <span class="ttl" id="filmTitle">f. 1r</span>
+  <button class="btn small" type="button" id="filmStop">Stop</button>
+  <div class="track"><i id="filmProg"></i></div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NS = 'http://www.w3.org/2000/svg';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+
+/* ---------- W3C relative luminance and contrast ---------- */
+function lum(hex) {
+  let h = hex.replace('#', '');
+  if (h.length === 3) h = [...h].map(c => c + c).join('');
+  const ch = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16) / 255)
+    .map(c => c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+  return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+}
+function ratio(a, b) { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+const fx = r => r.toFixed(2);
+const bestText = bg => ratio('#FFFFFF', bg) >= ratio('#111827', bg) ? '#FFFFFF' : '#111827';
+
+/* ---------- seeded randomness ---------- */
+function rng(seed) {
+  let a = seed >>> 0;
+  return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function gauss(r) { let u = 0, v = 0; while (!u) u = r(); while (!v) v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+/* ---------- watercolor: recursive midpoint deformation, glazed in thin layers ---------- */
+function deform(pts, depth, amt, r) {
+  let out = pts;
+  for (let d = 0; d < depth; d++) {
+    const nx = [];
+    for (let i = 0; i < out.length; i++) {
+      const a = out[i], b = out[(i + 1) % out.length];
+      const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      const v = (a[2] + b[2]) / 2;
+      nx.push(a, [(a[0] + b[0]) / 2 + gauss(r) * len * amt * v, (a[1] + b[1]) / 2 + gauss(r) * len * amt * v, Math.max(0.25, v * (0.7 + r() * 0.6))]);
+    }
+    out = nx;
+  }
+  return out;
+}
+function outline(path, step) {
+  const out = [];
+  for (let i = 0; i < path.length; i++) {
+    const a = path[i], b = path[(i + 1) % path.length];
+    const n = Math.max(1, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / step));
+    for (let k = 0; k < n; k++) out.push([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n, 1]);
+  }
+  return out;
+}
+function washOps(ctx, shape, color, seed, layers, alpha) {
+  const r = rng(seed), base = deform(shape, 2, 0.17, r), ops = [];
+  const a = alpha || 0.045;
+  for (let k = 0; k < 3; k++) {
+    const sub = deform(base, 1, 0.45, r);
+    for (let j = 0; j < layers / 3; j++) {
+      ops.push(() => {
+        const p = deform(sub, 2, 0.5, r);
+        ctx.globalAlpha = a; ctx.fillStyle = color; ctx.beginPath();
+        ctx.moveTo(p[0][0], p[0][1]);
+        for (let i = 1; i < p.length; i++) ctx.lineTo(p[i][0], p[i][1]);
+        ctx.closePath(); ctx.fill();
+      });
+    }
+  }
+  return ops;
+}
+function run(ops, per, done) {
+  let i = 0;
+  (function step() {
+    for (let k = 0; k < per && i < ops.length; k++, i++) ops[i]();
+    if (i < ops.length) requestAnimationFrame(step); else if (done) done();
+  })();
+}
+
+/* ---------- paper ---------- */
+function paper() {
+  try {
+    const s = 512, c = document.createElement('canvas'); c.width = c.height = s;
+    const x = c.getContext('2d'), r = rng(7);
+    x.fillStyle = '#EADCBB'; x.fillRect(0, 0, s, s);
+    const id = x.getImageData(0, 0, s, s), d = id.data;
+    for (let i = 0; i < d.length; i += 4) { const n = (r() - 0.5) * 15; d[i] += n; d[i + 1] += n * 0.95; d[i + 2] += n * 0.78; }
+    x.putImageData(id, 0, 0);
+    x.strokeStyle = '#6B4A24'; x.lineWidth = 0.6; x.globalAlpha = 0.05;
+    for (let i = 0; i < 110; i++) {
+      const x0 = r() * s, y0 = r() * s, len = 18 + r() * 60, a = r() * Math.PI;
+      x.beginPath(); x.moveTo(x0, y0);
+      x.quadraticCurveTo(x0 + Math.cos(a) * len / 2 + (r() - 0.5) * 12, y0 + Math.sin(a) * len / 2 + (r() - 0.5) * 12, x0 + Math.cos(a) * len, y0 + Math.sin(a) * len);
+      x.stroke();
+    }
+    x.globalAlpha = 1;
+    for (let i = 0; i < 10; i++) {
+      const fx0 = r() * s, fy0 = r() * s, fr = 3 + r() * 26, al = 0.035 + r() * 0.07;
+      for (const ox of [-s, 0, s]) for (const oy of [-s, 0, s]) {
+        const g = x.createRadialGradient(fx0 + ox, fy0 + oy, 0, fx0 + ox, fy0 + oy, fr);
+        g.addColorStop(0, `rgba(140,90,40,${al})`); g.addColorStop(0.7, `rgba(140,90,40,${al * 0.45})`); g.addColorStop(1, 'rgba(140,90,40,0)');
+        x.fillStyle = g; x.fillRect(fx0 + ox - fr, fy0 + oy - fr, fr * 2, fr * 2);
+      }
+    }
+    document.body.style.backgroundImage = `url(${c.toDataURL('image/jpeg', 0.9)})`;
+  } catch (e) { /* plain paper color remains */ }
+}
+
+/* ---------- f. 1r: the wheel ---------- */
+const FAM = [['Red', '#B91C1C'], ['Orange', '#C2410C'], ['Amber', '#F59E0B'], ['Green', '#166534'], ['Teal', '#0F766E'], ['Blue', '#075985'], ['Purple', '#6D28D9'], ['Magenta', '#BE185D'], ['Charcoal', '#1C1917'], ['Grey', '#94A3B8']];
+const rad = d => d * Math.PI / 180;
+function arcD(cx, cy, r, a0, a1) {
+  const p0 = [cx + Math.cos(rad(a0)) * r, cy + Math.sin(rad(a0)) * r], p1 = [cx + Math.cos(rad(a1)) * r, cy + Math.sin(rad(a1)) * r];
+  return `M${p0[0].toFixed(1)} ${p0[1].toFixed(1)} A${r} ${r} 0 ${Math.abs(a1 - a0) > 180 ? 1 : 0} 1 ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}`;
+}
+function construct(svg, ink) {
+  const c = ink ? 'ink ' : '';
+  const add = (tag, a, cls, d) => { const e = el(tag, Object.assign({ class: c + cls }, a), svg); if (d != null) e.style.setProperty('--d', d + 's'); return e; };
+  add('circle', { cx: 300, cy: 300, r: 272 }, 'w2', 0);
+  add('rect', { x: 100, y: 100, width: 400, height: 400 }, 'w15', 0.25);
+  add('circle', { cx: 300, cy: 300, r: 277 }, 'w05', 0.4);
+  add('line', { x1: 18, y1: 300, x2: 582, y2: 300 }, 'w05', 0.15);
+  add('line', { x1: 300, y1: 18, x2: 300, y2: 582 }, 'w05', 0.2);
+  add('line', { x1: 100, y1: 100, x2: 500, y2: 500 }, 'w05', 0.5);
+  add('line', { x1: 500, y1: 100, x2: 100, y2: 500 }, 'w05', 0.55);
+  add('circle', { cx: 300, cy: 300, r: 236 }, 'w1', 0.7);
+  add('circle', { cx: 300, cy: 300, r: 112 }, 'w1', 0.8);
+  add('circle', { cx: 300, cy: 300, r: 80 }, 'w1', 1.6);
+  let t = '';
+  for (let i = 0; i < 72; i++) {
+    const a = rad(i * 5), L = i % 6 === 0 ? 12 : 6;
+    t += `M${(300 + Math.cos(a) * 272).toFixed(1)} ${(300 + Math.sin(a) * 272).toFixed(1)}L${(300 + Math.cos(a) * (272 - L)).toFixed(1)} ${(300 + Math.sin(a) * (272 - L)).toFixed(1)}`;
+  }
+  const tk = add('path', { d: t }, 'w05', 0.9); tk.style.setProperty('--dur', '2.2s');
+  [[100, 100, 20, 70], [500, 100, 110, 160], [500, 500, 200, 250], [100, 500, 290, 340]].forEach(([x, y, a0, a1], i) => add('path', { d: arcD(x, y, 200, a0, a1) }, 'w05', 1 + i * 0.12));
+  [0, 90, 180, 270].forEach((a, i) => add('path', { d: arcD(300, 300, 292, a - 7, a + 7) }, 'w05', 1.2 + i * 0.1));
+  return svg;
+}
+function heroWheel() {
+  construct($('#under'), false).querySelectorAll('*').forEach(e => e.setAttribute('class', 'graphite'));
+  const ink = construct($('#inkSvg'), true);
+  const arc = el('path', { id: 'coreArc', d: 'M208 300 A92 92 0 1 1 392 300 A92 92 0 1 1 208 300', fill: 'none', stroke: 'none' }, ink);
+  const at = el('text', { class: 'arc-t' }, ink);
+  const tp = el('textPath', { href: '#coreArc', startOffset: '25%', 'text-anchor': 'middle' }, at);
+  tp.textContent = 'actio · the one reserved color';
+  el('text', { x: 300, y: 300, class: 'core-t', 'font-size': 24 }, ink).textContent = 'ACTIO';
+  el('text', { x: 300, y: 322, class: 'core-t', 'font-size': 12, 'letter-spacing': '1.5' }, ink).textContent = '#C2410C';
+
+  const rot = $('#rotorSvg');
+  FAM.forEach(([n], i) => {
+    const a = rad(-90 + i * 36);
+    el('line', { x1: 300 + Math.cos(a) * 112, y1: 300 + Math.sin(a) * 112, x2: 300 + Math.cos(a) * 236, y2: 300 + Math.sin(a) * 236, class: 'ink w05' }, rot).style.setProperty('--d', (0.6 + i * 0.05) + 's');
+    const m = -90 + i * 36 + 18, mx = 300 + Math.cos(rad(m)) * 254, my = 300 + Math.sin(rad(m)) * 254;
+    el('text', { x: mx, y: my, class: 'wl', transform: `rotate(${m + 90} ${mx} ${my})` }, rot).textContent = n;
+  });
+
+  const S = 1100, s = S / 600;
+  const cv = $('#wedges'), core = $('#core');
+  cv.width = cv.height = S; core.width = core.height = S;
+  const cx = cv.getContext('2d'), kx = core.getContext('2d');
+  const ops = [];
+  FAM.forEach(([, col], i) => {
+    const a0 = rad(-90 + i * 36 + 1.4), a1 = rad(-90 + (i + 1) * 36 - 1.4), pts = [];
+    for (let k = 0; k <= 9; k++) { const a = a0 + (a1 - a0) * k / 9; pts.push([(300 + Math.cos(a) * 231) * s, (300 + Math.sin(a) * 231) * s]); }
+    for (let k = 9; k >= 0; k--) { const a = a0 + (a1 - a0) * k / 9; pts.push([(300 + Math.cos(a) * 119) * s, (300 + Math.sin(a) * 119) * s]); }
+    ops.push(...washOps(cx, outline(pts, 34), col, 101 + i * 17, 36));
+  });
+  const cp = [];
+  for (let k = 0; k < 36; k++) { const a = rad(k * 10); cp.push([(300 + Math.cos(a) * 74) * s, (300 + Math.sin(a) * 74) * s]); }
+  const coreOps = washOps(kx, outline(cp, 30), '#C2410C', 7, 45, 0.05);
+  if (RM) { ops.forEach(f => f()); coreOps.forEach(f => f()); return; }
+  run(ops, 3, () => run(coreOps, 2, () => $('.rotor').classList.add('turning')));
+}
+
+/* ---------- f. 2r: emblems ---------- */
+function emblems() {
+  const page = (g, x, y, w, h, fill) => el('rect', { x, y, width: w, height: h, rx: 2, fill: fill || '#F6EEDC', class: 'ink w1' }, g);
+  const box = (g, x, y, w, h, fill, rx) => el('rect', { x, y, width: w, height: h, rx: rx || 1.5, fill, stroke: 'none' }, g);
+  const make = {
+    sales(g) { page(g, 6, 6, 100, 60, '#DDE8D8'); for (let i = 0; i < 4; i++) box(g, 14, 16 + i * 8, 50 - i * 6, 4, '#166534'); box(g, 14, 50, 26, 9, '#166534', 2); box(g, 70, 46, 28, 12, '#B91C1C', 3); },
+    positivity(g) { page(g, 6, 6, 100, 60, '#FFFBEB'); box(g, 16, 18, 40, 5, '#33241A'); box(g, 16, 28, 30, 3, '#7A5A36'); el('circle', { cx: 84, cy: 30, r: 8, fill: '#F59E0B', stroke: 'none' }, g); box(g, 16, 48, 24, 9, '#C2410C', 3); },
+    trust(g) { page(g, 6, 6, 100, 60, '#F6EEDC'); box(g, 7, 7, 98, 11, '#075985'); box(g, 16, 26, 44, 5, '#33241A'); box(g, 16, 35, 34, 3, '#7A5A36'); box(g, 16, 46, 30, 11, '#C2410C', 3); box(g, 66, 26, 30, 30, '#075985', 2).setAttribute('fill-opacity', '.25'); },
+    urgency(g) { page(g, 6, 6, 100, 60, '#F6EEDC'); box(g, 16, 18, 44, 5, '#33241A'); box(g, 16, 28, 36, 3, '#7A5A36'); box(g, 16, 34, 30, 3, '#7A5A36'); box(g, 68, 16, 30, 10, '#B91C1C', 5); box(g, 16, 48, 30, 10, '#075985', 3); },
+    reuse(g) { [['#C2410C', 30, 6], ['#075985', 18, 18], ['#166534', 6, 30]].forEach(([c, x, y]) => { page(g, x, y, 72, 34); el('circle', { cx: x + 12, cy: y + 12, r: 5, fill: c, stroke: 'none' }, g); box(g, x + 24, y + 10, 34, 4, '#7A5A36'); }); },
+    comprehension(g) { [6, 42, 78].forEach(x => { page(g, x, 12, 30, 48); box(g, x + 5, 20, 18, 3, '#7A5A36'); box(g, x + 5, 27, 14, 3, '#7A5A36'); box(g, x + 5, 44, 20, 8, '#C2410C', 2); }); }
+  };
+  $$('[data-emblem]').forEach(svg => { const g = el('g', null, svg); make[svg.dataset.emblem](g); });
+}
+
+/* ---------- f. 2v: pigment swatches ---------- */
+function swatches() {
+  $$('canvas.swatch').forEach((c, i) => {
+    c.width = 440; c.height = 170;
+    const x = c.getContext('2d'), r = rng(300 + i * 13), pts = [];
+    const tilt = (r() - 0.5) * 0.12;
+    for (let k = 0; k < 40; k++) {
+      const a = k / 40 * Math.PI * 2, ca = Math.cos(a), sa = Math.sin(a);
+      const px = Math.sign(ca) * Math.pow(Math.abs(ca), 0.55) * 195, py = Math.sign(sa) * Math.pow(Math.abs(sa), 0.85) * 58 * (1 - 0.25 * ca);
+      pts.push([220 + px * Math.cos(tilt) - py * Math.sin(tilt), 85 + px * Math.sin(tilt) + py * Math.cos(tilt)]);
+    }
+    const ops = washOps(x, outline(pts, 26), c.dataset.color, 300 + i * 13, 33);
+    if (RM) ops.forEach(f => f()); else setTimeout(() => run(ops, 11), 300 + i * 60);
+  });
+}
+
+/* ---------- f. 3r: gears and tokens ---------- */
+const TOK = [['--color-surface', '#F8FAFC'], ['--color-surface-raised', '#FFFFFF'], ['--color-text', '#111827'], ['--color-text-muted', '#475569'], ['--color-brand', '#075985'], ['--color-action', '#C2410C'], ['--color-on-action', '#FFFFFF'], ['--color-success', '#166534'], ['--color-warning', '#A16207'], ['--color-error', '#B91C1C'], ['--color-info', '#075985'], ['--color-focus', '#4338CA'], ['--color-border', '#94A3B8']];
+const CSS_TEXT = ':root {\n' + TOK.map(([k, v]) => `  ${k}: ${v};`).join('\n') + '\n}';
+function gearPath(T, m) {
+  const rp = T * m / 2, ra = rp + m, rd = rp - 1.25 * m, p = 2 * Math.PI / T;
+  let d = '';
+  for (let k = 0; k < T; k++) {
+    const a = k * p;
+    [[rd, a - p * 0.5], [rd, a - p * 0.27], [ra, a - p * 0.15], [ra, a + p * 0.15], [rd, a + p * 0.27]].forEach(([r, t], i) => {
+      d += (k === 0 && i === 0 ? 'M' : 'L') + (r * Math.cos(t)).toFixed(2) + ' ' + (r * Math.sin(t)).toFixed(2);
+    });
+  }
+  return d + 'Z';
+}
+function gears() {
+  const svg = $('#gears'), m = 7;
+  const G = [
+    { T: 26, x: 150, y: 172, name: 'I · Primitive', sub: 'raw ramps', dots: ['#075985', '#C2410C', '#0F172A'], spokes: 6 },
+    { T: 16, name: 'II · Semantic', sub: 'intent', dots: ['#C2410C', '#166534', '#B91C1C'], spokes: 4 },
+    { T: 10, name: 'III · Component', sub: 'aliases', dots: ['#C2410C'], spokes: 0 }
+  ];
+  const pr = T => T * m / 2;
+  G[1].phi = -0.42; G[1].x = G[0].x + (pr(G[0].T) + pr(G[1].T)) * Math.cos(G[1].phi); G[1].y = G[0].y + (pr(G[0].T) + pr(G[1].T)) * Math.sin(G[1].phi);
+  G[2].phi = 0.55; G[2].x = G[1].x + (pr(G[1].T) + pr(G[2].T)) * Math.cos(G[2].phi); G[2].y = G[1].y + (pr(G[1].T) + pr(G[2].T)) * Math.sin(G[2].phi);
+  G.forEach(g => {
+    g.el = el('g', null, svg);
+    el('path', { d: gearPath(g.T, m), fill: 'url(#hatch)', class: 'ink w15' }, g.el);
+    const rd = pr(g.T) - 1.25 * m;
+    if (g.spokes) {
+      el('circle', { cx: 0, cy: 0, r: rd - 7, fill: '#EADCBB', class: 'w1' }, g.el);
+      for (let k = 0; k < g.spokes; k++) { const a = k * 2 * Math.PI / g.spokes; el('line', { x1: Math.cos(a) * 12, y1: Math.sin(a) * 12, x2: Math.cos(a) * (rd - 7), y2: Math.sin(a) * (rd - 7), class: 'w2' }, g.el); }
+    }
+    el('circle', { cx: 0, cy: 0, r: 11, fill: '#EADCBB', class: 'w15' }, g.el);
+    el('circle', { cx: 0, cy: 0, r: 3, fill: '#33241A', stroke: 'none' }, g.el);
+    g.dots.forEach((c, k) => { const a = rad(30 + k * 120), rr = g.T > 12 ? rd * 0.55 : rd * 0.72; el('circle', { cx: Math.cos(a) * rr, cy: Math.sin(a) * rr, r: g.T > 12 ? 7 : 6, fill: c, class: 'w05' }, g.el); });
+    const above = g === G[1], ly = above ? g.y - pr(g.T) - m - 24 : g.y + pr(g.T) + m + 24;
+    el('text', { x: g.x, y: ly, class: 'gear-t' }, svg).textContent = g.name;
+    el('text', { x: g.x, y: ly + 15, class: 'gear-s' }, svg).textContent = g.sub;
+  });
+  const set = t => {
+    const th = [t * 2 * Math.PI / 30];
+    th[1] = G[1].phi + Math.PI + Math.PI / G[1].T - (G[0].T / G[1].T) * (th[0] - G[1].phi);
+    th[2] = G[2].phi + Math.PI + Math.PI / G[2].T - (G[1].T / G[2].T) * (th[1] - G[2].phi);
+    G.forEach((g, i) => g.el.setAttribute('transform', `translate(${g.x.toFixed(2)} ${g.y.toFixed(2)}) rotate(${(th[i] * 180 / Math.PI).toFixed(3)})`));
+  };
+  set(0);
+  if (!RM && 'IntersectionObserver' in window) {
+    let vis = false, running = false, last = 0, acc = 0;
+    const loop = now => {
+      if (!vis) { running = false; last = 0; return; }
+      if (last) acc += Math.min(50, now - last);
+      last = now; set(acc / 1000); requestAnimationFrame(loop);
+    };
+    new IntersectionObserver(es => { vis = es[0].isIntersecting; if (vis && !running) { running = true; requestAnimationFrame(loop); } }).observe(svg);
+  }
+  const ul = $('#tokList');
+  TOK.forEach(([k, v]) => { const li = document.createElement('li'); li.innerHTML = `<span class="sw" style="background:${v}"></span><code>${k}</code><span class="v">${v}</span>`; ul.appendChild(li); });
+  $('#calcLine').textContent = `${fx(ratio('#FFFFFF', '#C2410C'))} : 1 on action, ${fx(ratio('#FFFFFF', '#075985'))} : 1 on brand, ${fx(ratio('#FFFFFF', '#166534'))} : 1 on success and ${fx(ratio('#FFFFFF', '#B91C1C'))} : 1 on error`;
+}
+
+/* ---------- f. 3v: the balance ---------- */
+const PIG = [['#FFFFFF', 'white'], ['#F8FAFC', 'surface'], ['#111827', 'text'], ['#075985', 'brand'], ['#C2410C', 'action'], ['#166534', 'success'], ['#A16207', 'warning'], ['#B91C1C', 'error'], ['#4338CA', 'focus'], ['#6D28D9', 'purple'], ['#0F766E', 'teal'], ['#BE185D', 'magenta'], ['#F59E0B', 'amber'], ['#FACC15', 'yellow'], ['#22D3EE', 'cyan'], ['#94A3B8', 'border grey']];
+const PRESETS = [['#FFFFFF', '#C2410C'], ['#FFFFFF', '#075985'], ['#FFFFFF', '#166534'], ['#FFFFFF', '#B91C1C'], ['#FFFFFF', '#6D28D9'], ['#111827', '#F59E0B'], ['#FFFFFF', '#F59E0B'], ['#94A3B8', '#F8FAFC']];
+const bal = { fg: '#FFFFFF', bg: '#C2410C', th: 0, vel: 0, target: 0, running: false, last: 0 };
+function balance() {
+  const beam = $('#beam'), pl = $('#panL'), pr = $('#panR');
+  const draw = () => {
+    const c = Math.cos(bal.th), s = Math.sin(bal.th);
+    beam.setAttribute('transform', `rotate(${(bal.th * 180 / Math.PI).toFixed(3)} 220 70)`);
+    pl.setAttribute('transform', `translate(${(220 - 150 * c).toFixed(2)} ${(70 - 150 * s).toFixed(2)})`);
+    pr.setAttribute('transform', `translate(${(220 + 150 * c).toFixed(2)} ${(70 + 150 * s).toFixed(2)})`);
+  };
+  const tick = now => {
+    const dt = bal.last ? Math.min(0.033, (now - bal.last) / 1000) : 0.016; bal.last = now;
+    bal.vel += (-52 * (bal.th - bal.target) - 5 * bal.vel) * dt; bal.th += bal.vel * dt; draw();
+    if (Math.abs(bal.th - bal.target) > 0.0004 || Math.abs(bal.vel) > 0.0004) requestAnimationFrame(tick);
+    else { bal.th = bal.target; draw(); bal.running = false; }
+  };
+  const settle = r => {
+    bal.target = -Math.max(-0.26, Math.min(0.26, Math.log(r / 4.5) * 0.6));
+    if (RM) { bal.th = bal.target; draw(); return; }
+    if (!bal.running) { bal.running = true; bal.last = 0; requestAnimationFrame(tick); }
+  };
+  const rows = { fg: $('#fgRow'), bg: $('#bgRow') };
+  const inputs = {};
+  ['fg', 'bg'].forEach(key => {
+    PIG.forEach(([hex, name]) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip'; b.style.background = hex; b.dataset.hex = hex;
+      b.setAttribute('aria-label', `${name} ${hex}`); b.title = `${name} ${hex}`;
+      b.addEventListener('click', () => { bal[key] = hex; update(); });
+      rows[key].appendChild(b);
+    });
+    const inp = document.createElement('input');
+    inp.type = 'color'; inp.id = key + 'Custom'; inp.setAttribute('aria-label', key === 'fg' ? 'Custom letter color' : 'Custom ground color');
+    inp.addEventListener('input', () => { bal[key] = inp.value.toUpperCase(); update(); });
+    rows[key].appendChild(inp); inputs[key] = inp;
+  });
+  const pz = $('#presets');
+  PRESETS.forEach(([f, b]) => {
+    const btn = document.createElement('button'); btn.type = 'button';
+    const r = ratio(f, b);
+    btn.innerHTML = `<span class="sw2" style="background:${b}"></span>${f === '#FFFFFF' ? 'White' : f} on ${b} · ${fx(r)}${r < 4.5 ? ' (fails)' : ''}`;
+    btn.addEventListener('click', () => { bal.fg = f; bal.bg = b; update(); });
+    pz.appendChild(btn);
+  });
+  const ver = $('#verdicts');
+  function update() {
+    const r = ratio(bal.fg, bal.bg);
+    const sp = $('#specimen'); sp.style.background = bal.bg; sp.style.color = bal.fg;
+    $('#ratioOut').textContent = `${fx(r)} : 1`;
+    $('#pairOut').textContent = `${bal.fg} on ${bal.bg}`;
+    $('#wL').textContent = fx(r);
+    ver.innerHTML = '';
+    [['Normal text', 4.5], ['Large text', 3], ['Components & focus', 3]].forEach(([n, t]) => {
+      const ok = r >= t, li = document.createElement('li');
+      li.innerHTML = `<span class="v ${ok ? 'pass' : 'fail'}">${ok ? '✓ Passes' : '✗ Fails'}</span><span>${n}, needs ${t} : 1</span>`;
+      ver.appendChild(li);
+    });
+    ['fg', 'bg'].forEach(k => {
+      $$('.chip', rows[k]).forEach(c => c.setAttribute('aria-pressed', String(c.dataset.hex === bal[k])));
+      inputs[k].value = bal[k].length === 7 ? bal[k].toLowerCase() : '#000000';
+    });
+    settle(r);
+  }
+  draw(); update();
+  bal.apply = (f, b) => { bal.fg = f; bal.bg = b; update(); };
+
+  const tw = $('#twelve');
+  for (let i = 0; i < 12; i++) {
+    const g = el('g', { transform: `translate(${12 + i * 24} 0)` }, tw);
+    const hatched = i === 7;
+    el('circle', { cx: 0, cy: 10, r: 6, fill: hatched ? 'url(#hatch)' : 'none', stroke: hatched ? '#9A3A20' : '#5E4630', 'stroke-width': 1.3 }, g);
+    el('path', { d: 'M-8 40 Q-8 20 0 19 Q8 20 8 40 Z', fill: hatched ? 'url(#hatch)' : 'none', stroke: hatched ? '#9A3A20' : '#5E4630', 'stroke-width': 1.3 }, g);
+  }
+}
+
+/* ---------- f. 4r: the atlas ---------- */
+const TRADES = [
+  { n: 'Sales landing page', s: '#FFF7ED', t: '#1F2937', b: '#7C2D12', a: '#C2410C', x: ['#F59E0B'], use: 'Warm action color for “Book demo”, “Start trial” or “Get offer”; keep proof and pricing areas neutral.', cave: 'Warm colors create energy, but too much looks promotional or urgent. Reserve orange or red for one next step.' },
+  { n: 'E-commerce store', s: '#F8FAFC', t: '#111827', b: '#0F172A', a: '#B91C1C', x: ['#166534'], use: 'Red action only if it contrasts with the catalog; green for confirmed stock or completed checkout, plus an icon and text.', cave: 'Product photography should dominate. A red button may clash with error or discount meanings.' },
+  { n: 'B2B SaaS', s: '#F8FAFC', t: '#111827', b: '#075985', a: '#C2410C', x: ['#0F766E'], use: 'Blue for navigation, product frames and trust; orange for the primary acquisition action.', cave: 'Blue fits the category but can make the product interchangeable with competitors.' },
+  { n: 'Finance & fintech', s: '#F8FAFC', t: '#0F172A', b: '#075985', a: '#075985', x: ['#166534'], use: 'Blue action for routine transactions; explicit arrows, labels and signs for gains and losses.', cave: 'Don’t rely on green and red for portfolio direction; those pairs fail under common color-vision deficiencies.' },
+  { n: 'Healthcare', s: '#F0FDFA', t: '#172033', b: '#0F766E', a: '#075985', x: ['#B91C1C'], use: 'Teal for calm structure, blue for the appointment action, red only for urgent clinical or validation states.', cave: 'Over-soft palettes make important controls look disabled; urgency must stay unmistakable.' },
+  { n: 'Wellness & mindfulness', s: '#FAFAF9', t: '#292524', b: '#0F766E', a: '#166534', x: ['#A16207'], use: 'Muted natural surfaces; deep green action with white text; amber as a restrained highlight.', cave: 'Pale-on-pale “calm” interfaces often fail contrast.' },
+  { n: 'Education & courses', s: '#EFF6FF', t: '#172033', b: '#075985', a: '#6D28D9', x: ['#C2410C'], use: 'Blue for curriculum structure, purple for “Continue”, orange for key highlights rather than grades.', cave: 'Evidence on red, blue and cognition is mixed; don’t claim the palette improves learning.' },
+  { n: 'Quiz & assessment', s: '#F5F3FF', t: '#172033', b: '#6D28D9', a: '#4338CA', x: ['#166534', '#B91C1C'], xl: ['correct', 'wrong'], use: 'Indigo for “Submit answer”; correct and incorrect states need text, an icon and a border, not only green and red.', cave: 'Showing red before an answer is final feels punitive and may trigger achievement-related avoidance.' },
+  { n: 'Casual gaming', s: '#111827', t: '#FFFFFF', b: '#6D28D9', a: '#F59E0B', on: '#111827', x: ['#22D3EE'], use: 'Amber for play or purchase, cyan for interactive highlights, purple for world-building.', cave: 'Neon everywhere destroys hierarchy; bloom and gradients reduce legibility.' },
+  { n: 'Competitive gaming', s: '#0F172A', t: '#F8FAFC', b: '#B91C1C', a: '#FACC15', on: '#111827', x: ['#22D3EE'], use: 'Red for match intensity or enemy state; yellow for the primary ready or play control; cyan for information.', cave: 'Red must not mean both enemy and error without labels. Avoid flashing saturated fields.' },
+  { n: 'AI & developer tools', s: '#0F172A', t: '#F8FAFC', b: '#075985', a: '#22D3EE', on: '#111827', x: ['#84CC16'], use: 'Dark technical shell, cyan primary action, lime for successful runs, monospaced data accents.', cave: '“Cyber” palettes look generic, and cyan text tires the eye when overused.' },
+  { n: 'Creative portfolio', s: '#FFF1F2', t: '#1F2937', b: '#BE185D', a: '#4338CA', x: ['#F59E0B'], use: 'Expressive brand blocks; an indigo action anchors the composition.', cave: 'The work should stay the visual hero; the interface must not compete with it.' },
+  { n: 'Travel & hospitality', s: '#FFFBEB', t: '#1F2937', b: '#075985', a: '#C2410C', x: ['#0F766E'], use: 'Blue and teal for destination trust and calm, orange for “Check availability” or “Book”.', cave: 'Warm photo grading can swallow an orange button; give it a solid contrasting container.' },
+  { n: 'Sustainability & climate', s: '#F0FDF4', t: '#1C2B20', b: '#166534', a: '#075985', x: ['#A16207'], use: 'Green for identity, blue action to avoid a green-on-green button, amber for measured highlights.', cave: 'Green is expected, can feel clichéd, and may imply environmental claims you can’t support.' },
+  { n: 'Luxury & premium', s: '#FAFAF9', t: '#1C1917', b: '#1C1917', a: '#7C2D12', x: ['#A16207'], use: 'Charcoal structure, restrained burgundy action, metallic-looking amber only as decoration.', cave: 'Gold-like colors often fail with white text; use them for lines and icons, or pair them with dark text.' },
+  { n: 'Children & family', s: '#FFFBEB', t: '#172033', b: '#4338CA', a: '#BE185D', x: ['#0F766E'], use: 'Several accents for categories, one stable magenta or indigo action role, clear icons and labels.', cave: 'Many saturated colors make everything look clickable. Avoid gender-coded assumptions.' },
+  { n: 'Non-profit & fundraising', s: '#F8FAFC', t: '#111827', b: '#075985', a: '#C2410C', x: ['#166534'], use: 'Blue for accountability content; a warm donate button; green for confirmed impact or completion.', cave: 'Emotional urgency undermines trust when it repeats on every module.' },
+  { n: 'Legal & professional services', s: '#FAFAF9', t: '#1F2937', b: '#334155', a: '#075985', x: ['#7C2D12'], use: 'Slate for authority, blue for contact or consultation, burgundy for selective emphasis.', cave: 'Too much dark color feels severe; keep reading surfaces bright.' }
+];
+const atlasState = { i: 0, cvd: '' };
+const P = {};
+function atlas() {
+  const svg = $('#plate');
+  const pg = el('g', { transform: 'translate(90 34)' }, svg);
+  P.inner = el('g', null, pg);
+  const g = P.inner;
+  P.bg = el('rect', { x: 0, y: 0, width: 360, height: 270, rx: 3, 'stroke-width': 1.2 }, g);
+  P.nav = el('rect', { x: 0.6, y: 0.6, width: 358.8, height: 32 }, g);
+  P.logo = el('circle', { cx: 18, cy: 16.6, r: 6.5 }, g);
+  P.navItems = [0, 1, 2].map(i => el('rect', { x: 226 + i * 42, y: 14, width: 30, height: 5, rx: 2.5 }, g));
+  P.pill = el('rect', { x: 22, y: 44, width: 46, height: 16, rx: 8 }, g);
+  P.pillT = el('text', { x: 45, y: 55.6, 'text-anchor': 'middle', class: 'pgtxt', 'font-size': 10.5, 'font-weight': 600 }, g); P.pillT.textContent = 'New';
+  P.h = [el('rect', { x: 22, y: 68, width: 200, height: 15, rx: 2 }, g), el('rect', { x: 22, y: 89, width: 150, height: 15, rx: 2 }, g)];
+  P.lines = [[22, 116, 206], [22, 127, 190], [22, 138, 166]].map(([x, y, w]) => el('rect', { x, y, width: w, height: 5, rx: 2.5 }, g));
+  P.btn = el('rect', { x: 22, y: 154, width: 112, height: 32, rx: 5 }, g);
+  P.btnT = el('text', { x: 78, y: 174.5, 'text-anchor': 'middle', class: 'pgtxt', 'font-size': 14, 'font-weight': 600 }, g); P.btnT.textContent = 'Start trial';
+  P.link = el('text', { x: 148, y: 174.5, class: 'pgtxt', 'font-size': 13, 'text-decoration': 'underline' }, g); P.link.textContent = 'Learn more';
+  P.img = el('rect', { x: 250, y: 48, width: 90, height: 138, rx: 3 }, g);
+  P.mount = el('path', { d: 'M258 176 L282 132 L298 152 L313 126 L332 176 Z', class: 'fillme' }, g);
+  P.sun = el('circle', { cx: 318, cy: 78, r: 9 }, g);
+  P.cards = [0, 1, 2].map(i => el('rect', { x: 22 + i * 108, y: 204, width: 96, height: 48, rx: 4 }, g));
+  P.cardDots = [0, 1, 2].map(i => el('circle', { cx: 37 + i * 108, cy: 219, r: 5 }, g));
+  P.cardLbl = [0, 1, 2].map(i => el('text', { x: 48 + i * 108, y: 223, class: 'pgtxt', 'font-size': 11 }, g));
+  P.cardLines = [0, 1, 2].map(i => el('rect', { x: 32 + i * 108, y: 234, width: 70, height: 5, rx: 2.5 }, g));
+  const ann = el('g', { class: 'inkwork' }, svg);
+  const lead = (label, lx, ly, tx, ty, anchor, d) => {
+    el('text', { x: lx, y: ly + 5, class: 'ann-t', 'text-anchor': anchor }, ann).textContent = label;
+    const sx = anchor === 'end' ? lx + 5 : lx - 5;
+    const p = el('path', { d: `M${sx} ${ly} Q${(sx + tx) / 2} ${ly - 14} ${tx} ${ty}`, class: 'ink w1' }, ann);
+    p.style.setProperty('--d', d + 's'); p.style.setProperty('--dur', '.9s');
+    el('circle', { cx: tx, cy: ty, r: 2.2, fill: '#33241A', stroke: 'none' }, ann);
+  };
+  lead('brand', 70, 40, 140, 50, 'end', 0.1);
+  lead('text', 70, 104, 124, 110, 'end', 0.25);
+  lead('action', 70, 196, 116, 204, 'end', 0.4);
+  lead('surface', 470, 66, 436, 82, 'start', 0.55);
+  lead('accent', 470, 236, 343, 253, 'start', 0.7);
+
+  const ul = $('#trades');
+  TRADES.forEach((t, i) => {
+    const li = document.createElement('li'), b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = `<span class="dots" aria-hidden="true"><i style="background:${t.s}"></i><i style="background:${t.b}"></i><i style="background:${t.a}"></i></span><span>${t.n}</span>`;
+    b.addEventListener('click', () => showTrade(i));
+    li.appendChild(b); ul.appendChild(li);
+  });
+  $$('.cvd-tools .seg').forEach(b => b.addEventListener('click', () => setCvd(b.dataset.cvd)));
+  showTrade(0);
+}
+function paint(node, fill, op) { node.style.fill = fill; node.style.fillOpacity = op == null ? 1 : op; }
+function showTrade(i) {
+  atlasState.i = i;
+  const t = TRADES[i], on = t.on || '#FFFFFF', acc = t.x;
+  paint(P.bg, t.s); P.bg.style.stroke = '#33241A';
+  paint(P.nav, t.b); paint(P.logo, t.s);
+  P.navItems.forEach(n => paint(n, t.s, 0.75));
+  paint(P.pill, acc[0]); paint(P.pillT, bestText(acc[0]));
+  P.h.forEach(n => paint(n, t.t));
+  P.lines.forEach(n => paint(n, t.t, 0.42));
+  paint(P.btn, t.a); paint(P.btnT, on); paint(P.link, t.t);
+  paint(P.img, t.b, 0.14); P.img.style.stroke = t.b; P.img.style.strokeOpacity = 0.5;
+  paint(P.mount, t.b, 0.6); paint(P.sun, acc[0]);
+  P.cards.forEach(n => { paint(n, t.t, 0.05); n.style.stroke = t.t; n.style.strokeOpacity = 0.2; });
+  P.cardDots.forEach((n, k) => paint(n, acc[k % acc.length]));
+  P.cardLbl.forEach((n, k) => { n.textContent = t.xl ? (k < 2 ? (k === 0 ? '✓ ' : '✗ ') + t.xl[k] : '') : ''; paint(n, t.t); });
+  P.cardLines.forEach(n => paint(n, t.t, 0.3));
+  $$('#trades button').forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+  $('#studyName').textContent = t.n;
+  $('#studyUse').innerHTML = `<span class="tag i">inferred</span>${t.use}`;
+  $('#studyCave').innerHTML = `<b>Cave</b>${t.cave}`;
+  const rows = [['Surface', t.s], ['Text', t.t], ['Brand', t.b], ['Action', t.a]].concat(acc.map((c, k) => [t.xl ? t.xl[k][0].toUpperCase() + t.xl[k].slice(1) : 'Accent', c]));
+  $('#studyChips').innerHTML = rows.map(([k, v]) => `<li><span class="sw" style="background:${v}"></span><span class="k">${k}</span><span class="v">${v}</span></li>`).join('');
+  $('#studyCalc').innerHTML = `<span class="tag c">calculated</span>Button label ${on} on ${t.a}: ${fx(ratio(on, t.a))} : 1. Body text on surface: ${fx(ratio(t.t, t.s))} : 1.`;
+}
+function setCvd(id) {
+  atlasState.cvd = id;
+  if (id) P.inner.setAttribute('filter', `url(#${id})`); else P.inner.removeAttribute('filter');
+  $$('.cvd-tools .seg').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cvd === id)));
+}
+
+/* ---------- f. 5r: tallies ---------- */
+function tally(svg, n, color, start) {
+  const r = rng(n * 31 + 5), groups = Math.floor(n / 5), rest = n % 5;
+  const w = groups * 50 + rest * 10 + 10;
+  svg.setAttribute('viewBox', `0 0 ${Math.max(w, 20)} 46`);
+  let k = 0;
+  const stroke = (d) => { const p = el('path', { d, class: 'ink w15', stroke: color }, svg); p.style.setProperty('--d', (start + k * 0.06).toFixed(2) + 's'); p.style.setProperty('--dur', '.3s'); k++; };
+  for (let gi = 0; gi < groups + (rest ? 1 : 0); gi++) {
+    const x0 = 8 + gi * 50, cnt = gi < groups ? 4 : rest;
+    for (let j = 0; j < cnt; j++) { const x = x0 + j * 9 + (r() - 0.5) * 1.6; stroke(`M${x.toFixed(1)} ${(6 + r() * 2).toFixed(1)} L${(x + (r() - 0.5) * 2.5).toFixed(1)} ${(40 - r() * 2).toFixed(1)}`); }
+    if (gi < groups) stroke(`M${x0 - 5} ${33 + r() * 3} L${x0 + 33} ${10 + r() * 3}`);
+  }
+}
+
+/* ---------- f. 6r: palette ---------- */
+function pans() {
+  const DEF = [
+    ['Surface', '#F8FAFC', `text #111827 reads at ${fx(ratio('#111827', '#F8FAFC'))} : 1`],
+    ['Text', '#111827', 'body copy and headings'],
+    ['Brand', '#075985', `white text ${fx(ratio('#FFFFFF', '#075985'))} : 1`],
+    ['Action', '#C2410C', `white text ${fx(ratio('#FFFFFF', '#C2410C'))} : 1, the warm focal role`],
+    ['Success', '#166534', `white text ${fx(ratio('#FFFFFF', '#166534'))} : 1`],
+    ['Warning', '#A16207', `${fx(ratio('#A16207', '#F8FAFC'))} : 1 on surface; give it a light container`],
+    ['Error', '#B91C1C', `white text ${fx(ratio('#FFFFFF', '#B91C1C'))} : 1`],
+    ['Focus', '#4338CA', `${fx(ratio('#4338CA', '#F8FAFC'))} : 1 against surface, needs 3 : 1`]
+  ];
+  $('#pans').innerHTML = DEF.map(([n, h, note]) => `<div class="pan"><div class="tin"><div class="cake" style="background:${h}"></div></div><span class="role">${n}</span><span class="v">${h}</span><span class="nt"><span class="tag c">calculated</span>${note}</span></div>`).join('');
+  $('#cssOut').textContent = CSS_TEXT;
+  const out = $('#copied');
+  $('#copyCss').addEventListener('click', () => {
+    const fallback = () => { const pre = $('#cssOut'); pre.closest('details').open = true; const rg = document.createRange(); rg.selectNodeContents(pre); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(rg); out.textContent = 'Selected. Press Ctrl+C or ⌘C to copy.'; };
+    try {
+      navigator.clipboard.writeText(CSS_TEXT).then(() => { out.textContent = 'Copied to clipboard.'; }, fallback);
+    } catch (e) { fallback(); }
+  });
+}
+
+/* ---------- ink measurement ---------- */
+function measureInk() {
+  $$('.ink').forEach(e => { try { const L = e.getTotalLength(); if (L > 0) e.style.setProperty('--len', Math.ceil(L + 2)); } catch (err) { /* text or unsupported */ } });
+}
+
+/* ---------- film ---------- */
+const FILM = [
+  { id: 'f1r', dwell: 7000 }, { id: 'f1v', dwell: 9000 }, { id: 'f2r', dwell: 9000 }, { id: 'f2v', dwell: 9000 },
+  { id: 'f3r', dwell: 8000 }, { id: 'f3v', dwell: 11000, on: 'balance' }, { id: 'f4r', dwell: 13000, on: 'atlas' },
+  { id: 'f4v', dwell: 9000 }, { id: 'f5r', dwell: 8000 }, { id: 'f5v', dwell: 8000 }, { id: 'f6r', dwell: 8000 }
+];
+const TOTAL = FILM.reduce((s, f) => s + f.dwell, 0);
+let film = null;
+const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function replay(sec) { if (RM) return; sec.classList.remove('drawing'); void sec.offsetWidth; sec.classList.add('drawing'); }
+function hooks(name) {
+  if (name === 'balance') {
+    let k = 0; film.timers.push(setInterval(() => { k = (k + 1) % PRESETS.length; bal.apply(...PRESETS[k]); }, 1300));
+  }
+  if (name === 'atlas') {
+    const seq = [[0, ''], [7, ''], [7, 'cvd-deut'], [8, ''], [10, ''], [13, '']];
+    let k = 0; showTrade(seq[0][0]); setCvd(seq[0][1]);
+    film.timers.push(setInterval(() => { k = Math.min(k + 1, seq.length - 1); showTrade(seq[k][0]); setCvd(seq[k][1]); }, 2100));
+  }
+}
+function startFilm() {
+  if (film) return;
+  film = { i: 0, done: 0, timers: [], raf: 0, quiet: 0 };
+  const bar = $('#filmbar'); bar.hidden = false; bar.classList.remove('quiet');
+  addEventListener('wheel', stopFilm, { passive: true });
+  addEventListener('touchstart', stopFilm, { passive: true });
+  addEventListener('keydown', onKey);
+  addEventListener('mousemove', wake);
+  wake();
+  shot();
+}
+function wake() { if (!film) return; const bar = $('#filmbar'); bar.classList.remove('quiet'); clearTimeout(film.quiet); film.quiet = setTimeout(() => bar.classList.add('quiet'), 2600); }
+function onKey(e) { if (e.key === 'Escape' || e.key === ' ' || e.key.startsWith('Arrow') || e.key === 'PageDown' || e.key === 'PageUp') stopFilm(); }
+function shot() {
+  if (!film) return;
+  if (film.i >= FILM.length) { stopFilm(); return; }
+  film.timers.forEach(clearInterval); film.timers = [];
+  const f = FILM[film.i], sec = document.getElementById(f.id);
+  $('#filmTitle').textContent = `${sec.querySelector('.folio-no').textContent} · ${sec.dataset.title}`;
+  replay(sec);
+  if (f.on) hooks(f.on);
+  const vh = innerHeight, top = sec.getBoundingClientRect().top + scrollY, end = Math.max(top, top + sec.offsetHeight - vh), from = scrollY;
+  const tIn = 1300, hold = 1200, t0 = performance.now();
+  const step = now => {
+    if (!film) return;
+    const t = now - t0;
+    let y;
+    if (t < tIn) y = from + (top - from) * ease(t / tIn);
+    else if (t < tIn + hold) y = top;
+    else y = top + (end - top) * ease(Math.min(1, (t - tIn - hold) / Math.max(1, f.dwell - tIn - hold - 600)));
+    scrollTo(0, y);
+    $('#filmProg').style.width = ((film.done + Math.min(t, f.dwell)) / TOTAL * 100).toFixed(2) + '%';
+    if (t < f.dwell) film.raf = requestAnimationFrame(step);
+    else { film.done += f.dwell; film.i++; shot(); }
+  };
+  film.raf = requestAnimationFrame(step);
+}
+function stopFilm() {
+  if (!film) return;
+  cancelAnimationFrame(film.raf); film.timers.forEach(clearInterval); clearTimeout(film.quiet);
+  film = null;
+  $('#filmbar').hidden = true;
+  removeEventListener('wheel', stopFilm); removeEventListener('touchstart', stopFilm);
+  removeEventListener('keydown', onKey); removeEventListener('mousemove', wake);
+}
+
+/* ---------- boot ---------- */
+paper();
+heroWheel();
+emblems();
+gears();
+balance();
+atlas();
+tally($('#tal1'), 26, '#5E4630', 0.3);
+tally($('#tal2'), 5, '#9A3A20', 2.2);
+tally($('#tal3'), 1, '#33241A', 2.6);
+pans();
+measureInk();
+if (!RM) $('#f1r').classList.add('drawing');
+swatches();
+$('#filmHint').textContent = `A ${Math.round(TOTAL / 1000)}-second camera pass through every folio, timed for screen recording. Scroll, tap or press Esc to stop.`;
+$('#playFilm').addEventListener('click', e => { e.stopPropagation(); startFilm(); });
+$('#filmStop').addEventListener('click', stopFilm);
+})();
+</script>
